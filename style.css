@@ -1,0 +1,103 @@
+/* 🎨 Paleta de colores */
+:root {
+  --negro-carbon: #0D0D0D;
+  --dorado: #E6B325;
+  --blanco-hueso: #FAF9F6;
+  --gris-suave: #C0C0C0;
+  --cafe-espresso: #4B2E2E;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--blanco-hueso);
+  color: var(--negro-carbon);
+  margin: 0;
+  padding: 20px;
+}
+
+/* Título */
+.titulo {
+  text-align: center;
+  color: var(--dorado);
+  margin-bottom: 20px;
+}
+
+/* Formulario */
+.formulario {
+  background-color: var(--cafe-espresso);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  color: var(--blanco-hueso);
+}
+
+.formulario label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.formulario input, 
+.formulario select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid var(--gris-suave);
+  border-radius: 5px;
+}
+
+.btn-agregar {
+  background-color: var(--dorado);
+  color: var(--negro-carbon);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-agregar:hover {
+  background-color: #c9981f;
+}
+
+/* Tabla */
+.tabla table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--blanco-hueso);
+}
+
+.tabla th, .tabla td {
+  border: 1px solid var(--gris-suave);
+  padding: 10px;
+  text-align: center;
+}
+
+.tabla th {
+  background-color: var(--negro-carbon);
+  color: var(--blanco-hueso);
+}
+
+.tabla tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+/* Botones de acción */
+.btn-editar {
+  background-color: var(--dorado);
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-eliminar {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-editar:hover { background-color: #c9981f; }
+.btn-eliminar:hover { background-color: #b52b27; }
