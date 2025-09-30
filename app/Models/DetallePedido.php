@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetallePedido extends Model
 {
-    protected $table = 'detalle_pedido'; // excepción porque tu tabla no está en plural
+    protected $table = 'detalle_pedido'; 
     protected $fillable = ['pedido_id', 'producto_id', 'cantidad', 'precio_unitario'];
 
     public function pedido()
