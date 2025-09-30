@@ -1,0 +1,156 @@
+:root {
+  --negro-carbon: #0D0D0D; 
+  --dorado: #E6B325;
+  --blanco-hueso: #FAF9F6;
+  --gris-suave: #C0C0C0;
+  --cafe-espresso: #4B2E2E;
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Fondo general con foto + desenfoque */
+.auth-body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: url("cafeteria.jpg") no-repeat center center/cover;
+  overflow: hidden;
+}
+
+/* Capa oscura + blur */
+.auth-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.6); /* capa oscura para legibilidad */
+  backdrop-filter: blur(3px); /* desenfoque */
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 0;
+}
+
+/* Contenedor centrado */
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  position: relative;
+  z-index: 1; /* para estar sobre el fondo */
+}
+
+/* Card estilo minimalista */
+.auth-card {
+  background: var(--blanco-hueso);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  border: 1px solid var(--gris-suave);
+}
+
+/* Título */
+.auth-title {
+  text-align: center;
+  color: var(--cafe-espresso);
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.auth-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--dorado);
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--cafe-espresso);
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--cafe-espresso);
+  font-size: 1rem;
+  background: var(--blanco-hueso);
+  color: var(--cafe-espresso);
+}
+
+input::placeholder {
+  color: var(--gris-suave);
+}
+
+input:focus {
+  border-color: var(--dorado);
+  outline: none;
+}
+
+/* Botón */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--dorado);
+  color: var(--blanco-hueso);
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #c89a20;
+}
+
+/* Switch de login/signup */
+.switch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--cafe-espresso);
+}
+
+.switch a {
+  color: var(--cafe-espresso);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.switch a:hover {
+  color: var(--dorado);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+  }
+
+  input, .btn {
+    padding: 12px;
+  }
+}
