@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 
 class AuthController extends Controller
 {
@@ -135,4 +138,53 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'ok'], 200);
     }
+
+
+
+
+
+    public function showLoginForm()
+    {
+        return view('login');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'correo' => 'required|email',
+            'password' => 'required|string',
+        ], [
+            'correo.required' => 'Ingresa tu correo',
+            'correo.email' => 'Correo no válido',
+            'password.required' => 'Ingresa tu contraseña'
+        ]);
+
+        $usuario = Usuario::where('correo', $request->correo)->first();
+
+        if (!$usuario || !Hash::check($request->password, $usuario->contrasena)) {
+            $message = 'Credenciales incorrectas';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 401);
+            }
+            return back()->withErrors(['general' => $message])->withInput();
+        }
+
+        // ✅ Iniciar sesión real
+        Auth::login($usuario);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Inicio de sesión exitoso'], 200);
+        }
+        return redirect('/bienvenida'); // Redirige al dashboard real
+        //return redirect('/dashboard'); // Redirige al dashboard real
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
+
 }
