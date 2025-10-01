@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Coffeeology</title>
-  <link rel="stylesheet" href="stylesLoginSignUp.css">
+  <link rel="stylesheet" href="{{ asset('css/stylesLoginSignUp.css') }}">
 </head>
 <body class="auth-body">
   <div class="auth-container">
@@ -20,7 +20,7 @@
           <input type="password" id="password" name="password" required>
         </div>
         <button type="submit" class="btn">Ingresar</button>
-        <p class="switch">¿No tienes cuenta? <a href="signup.html">Regístrate</a></p>
+        <p class="switch">¿No tienes cuenta? <a href="{{ route('signup.form') }}">Regístrate</a></p>
       </form>
     </div>
   </div>
