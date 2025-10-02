@@ -142,7 +142,7 @@
     </div>
     <!-- Contenido central -->
     <div class="splash-content">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo Coffeeology" class="splash-logo">
+        <img src="<?php echo e(asset('images/logo.png')); ?>" alt="Logo Coffeeology" class="splash-logo">
         <h1>¡Bienvenido a Coffeeology!</h1>
         <p>Descubre la ciencia del café y la quimica de cada sorbo</p>
     </div>
@@ -150,16 +150,17 @@
 <script>
     // Redirección automática a los 6 segundos
     let redirectTimeout = setTimeout(() => {
-        window.location.href = "{{ route('dashboard') }}";
+        window.location.href = "<?php echo e(route('dashboard')); ?>";
     }, 6000);
 
     // Si el usuario presiona la barra espaciadora, se redirige antes
     document.addEventListener('keydown', function(event) {
         if (event.code === 'Space') {
             clearTimeout(redirectTimeout); 
-            window.location.href = "{{ route('dashboard') }}";
+            window.location.href = "<?php echo e(route('dashboard')); ?>";
         }
     });
 </script>
 
 </html>
+<?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/splash.blade.php ENDPATH**/ ?>

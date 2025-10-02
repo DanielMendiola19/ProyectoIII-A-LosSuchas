@@ -1,8 +1,6 @@
-@extends('layouts.productos.app')
+<?php $__env->startSection('title', 'Gestión de Productos Coffeeology'); ?>
 
-@section('title', 'Gestión de Productos Coffeeology')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container">
     <header>
         <h1><i class="fas fa-coffee"></i> Gestión de Productos Coffeeology</h1>
@@ -11,18 +9,19 @@
     <!-- Estadísticas -->
     <div class="estadisticas">
         <div class="estadistica">
-            <div class="valor" id="totalProductos">{{ $productos->count() }}</div>
+            <div class="valor" id="totalProductos"><?php echo e($productos->count()); ?></div>
             <div class="etiqueta">Total Productos</div>
         </div>
         <div class="estadistica">
             <div class="valor" id="valorInventario">
-                {{ $productos->sum(fn($p) => $p->precio) }} Bs
+                <?php echo e($productos->sum(fn($p) => $p->precio)); ?> Bs
             </div>
             <div class="etiqueta">Valor Inventario</div>
         </div>
         <div class="estadistica">
             <div class="valor" id="productosBebidas">
-                {{ $productos->filter(fn($p) => $p->categoria->nombre === 'Bebidas')->count() }}
+                <?php echo e($productos->filter(fn($p) => $p->categoria->nombre === 'Bebidas')->count()); ?>
+
             </div>
         <div class="etiqueta">Productos Bebidas</div>
     </div>
@@ -31,8 +30,8 @@
     <!-- Formulario de productos -->
     <section class="card formulario">
         <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
-        <form id="productForm" action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        <form id="productForm" action="<?php echo e(route('productos.store')); ?>" method="POST" enctype="multipart/form-data">
+            <?php echo csrf_field(); ?>
             <label for="nombre"><i class="fas fa-tag"></i> Nombre del producto:</label>
             <input type="text" id="nombre" name="nombre" placeholder="Ej: Café Americano" required>
 
@@ -44,9 +43,9 @@
 
             <label for="categoria_id"><i class="fas fa-list"></i> Categoría:</label>
             <select id="categoria_id" name="categoria_id" required>
-                @foreach($categorias as $categoria)
-                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
-                @endforeach
+                <?php $__currentLoopData = $categorias; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categoria): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($categoria->id); ?>"><?php echo e($categoria->nombre); ?></option>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
 
             <label for="imagen"><i class="fas fa-image"></i> Imagen:</label>
@@ -77,33 +76,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($productos as $producto)
+                    <?php $__currentLoopData = $productos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $producto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <td class="td-imagen">
-                            <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('img/defecto.png') }}"
-                                 alt="{{ $producto->nombre }}"
+                            <img src="<?php echo e($producto->imagen ? asset('storage/'.$producto->imagen) : asset('img/defecto.png')); ?>"
+                                 alt="<?php echo e($producto->nombre); ?>"
                                  style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
                         </td>
-                        <td class="td-nombre">{{ $producto->nombre }}</td>
-                        <td class="td-precio">{{ $producto->precio }} Bs</td>
-                        <td class="td-stock">{{ $producto->stock }}</td>
-                        <td class="td-categoria">{{ $producto->categoria->nombre }}</td>
+                        <td class="td-nombre"><?php echo e($producto->nombre); ?></td>
+                        <td class="td-precio"><?php echo e($producto->precio); ?> Bs</td>
+                        <td class="td-stock"><?php echo e($producto->stock); ?></td>
+                        <td class="td-categoria"><?php echo e($producto->categoria->nombre); ?></td>
                         <td>
                             <button
                                 class="btn-editar"
-                                data-id="{{ $producto->id }}"
-                                data-imagen="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : '' }}"
-                                data-categoria="{{ $producto->categoria_id }}"
+                                data-id="<?php echo e($producto->id); ?>"
+                                data-imagen="<?php echo e($producto->imagen ? asset('storage/'.$producto->imagen) : ''); ?>"
+                                data-categoria="<?php echo e($producto->categoria_id); ?>"
                             >Editar</button>
 
-                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
+                            <form action="<?php echo e(route('productos.destroy', $producto->id)); ?>" method="POST" style="display:inline;">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('DELETE'); ?>
                                 <button class="btn-eliminar">Eliminar</button>
                             </form>
                         </td>
                     </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>
             </table>
         </div>
@@ -116,8 +115,8 @@
         <span class="close">&times;</span>
         <h2><i class="fas fa-edit"></i> Editar Producto</h2>
         <form id="editForm" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
             <input type="hidden" id="editId" name="id">
 
             <label for="editNombre">Nombre del producto:</label>
@@ -131,9 +130,9 @@
 
             <label for="editCategoria">Categoría:</label>
             <select id="editCategoria" name="categoria_id" required>
-                @foreach($categorias as $categoria)
-                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
-                @endforeach
+                <?php $__currentLoopData = $categorias; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categoria): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($categoria->id); ?>"><?php echo e($categoria->nombre); ?></option>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
 
             <label for="editImagen"><i class="fas fa-image"></i> Cambiar imagen (opcional):</label>
@@ -142,7 +141,7 @@
 
 
             <div class="imagen-preview" style="margin-top:10px;">
-                <img id="editPreview" src="{{ asset('img/defecto.png') }}" alt="Preview" style="width:120px; height:80px; object-fit:cover; border-radius:6px;">
+                <img id="editPreview" src="<?php echo e(asset('img/defecto.png')); ?>" alt="Preview" style="width:120px; height:80px; object-fit:cover; border-radius:6px;">
             </div>
 
             <button type="submit" class="btn btn-agregar" style="margin-top:10px;">
@@ -154,4 +153,6 @@
 
 <!-- Notificación -->
 <div id="notificacion" class="notificacion"></div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.productos.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/productos/index.blade.php ENDPATH**/ ?>

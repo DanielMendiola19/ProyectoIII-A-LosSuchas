@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mesa extends Model
 {
-    use HasFactory;
+    protected $fillable = ['numero_mesa', 'capacidad', 'estado'];
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
 }

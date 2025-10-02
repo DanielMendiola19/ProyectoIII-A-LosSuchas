@@ -24,4 +24,13 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
+    public function detalles()
+    {
+        return $this->hasMany(DetallePedido::class);
+    }
+
+    public function reportes()
+    {
+        return $this->hasMany(ReporteDiario::class);
+    }
 }
