@@ -526,6 +526,61 @@
 
 
 
+        input[type="file"] {
+            display: none; /* ocultamos el input real */
+        }
+
+        .custom-file-label {
+            display: block;
+            width: 100%;             /* ocupar todo el ancho del contenedor padre */
+            max-width: 100%; 
+            padding: 10px 15px;
+            background-color: rgba(230, 179, 37, 0.2);
+            color: var(--negro-carbon);
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .custom-file-label:hover {
+            background-color: rgba(230, 179, 37, 0.35);
+        }
+        
+        /* Contenedor para la vista previa en modal */
+        .imagen-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .imagen-preview img {
+            border-radius: 8px;
+            object-fit: cover;
+            max-width: 100%;
+            max-height: 120px;
+            border: 1px solid rgba(230, 179, 37, 0.3);
+        }
+
+        /* Ajustes específicos para modal de edición */
+        #modalEditar .modal-content input[type="file"] + .custom-file-label {
+            width: 100%;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Hacer que el botón de seleccionar imagen se vea más consistente */
+        #productForm .custom-file-label {
+            width: 100%;
+            display: block;
+        }
+
+
 /* Imagen en tabla */
 .tabla td img {
     width: 50px;

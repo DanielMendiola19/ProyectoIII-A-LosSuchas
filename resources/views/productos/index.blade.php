@@ -22,16 +22,16 @@
         </div>
         <div class="estadistica">
             <div class="valor" id="productosBebidas">
-                {{ $productos->where('categoria.nombre', 'bebidas')->count() }}
+                {{ $productos->filter(fn($p) => $p->categoria->nombre === 'Bebidas')->count() }}
             </div>
-            <div class="etiqueta">Productos Bebidas</div>
-        </div>
+        <div class="etiqueta">Productos Bebidas</div>
+    </div>
     </div>
 
     <!-- Formulario de productos -->
     <section class="card formulario">
         <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
-        <form id="productForm" action="{{ route('productos.store') }}" method="POST">
+        <form id="productForm" action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <label for="nombre"><i class="fas fa-tag"></i> Nombre del producto:</label>
             <input type="text" id="nombre" name="nombre" placeholder="Ej: Café Americano" required>
@@ -49,6 +49,12 @@
                 @endforeach
             </select>
 
+            <label for="imagen"><i class="fas fa-image"></i> Imagen:</label>
+            <input type="file" id="imagen" name="imagen" accept="image/*">
+            <label class="custom-file-label" for="imagen">Seleccionar imagen</label>
+
+
+
             <button type="submit" class="btn btn-agregar">
                 <i class="fas fa-plus"></i> Agregar Producto
             </button>
@@ -62,6 +68,7 @@
             <table class="tabla">
                 <thead>
                     <tr>
+                        <th>Imagen</th>
                         <th>Nombre</th>
                         <th>Precio</th>
                         <th>Stock</th>
@@ -72,12 +79,23 @@
                 <tbody>
                     @foreach($productos as $producto)
                     <tr>
-                        <td>{{ $producto->nombre }}</td>
-                        <td>{{ $producto->precio }} Bs</td>
-                        <td>{{ $producto->stock }}</td>
-                        <td>{{ $producto->categoria->nombre }}</td>
+                        <td class="td-imagen">
+                            <img src="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : asset('img/defecto.png') }}"
+                                 alt="{{ $producto->nombre }}"
+                                 style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
+                        </td>
+                        <td class="td-nombre">{{ $producto->nombre }}</td>
+                        <td class="td-precio">{{ $producto->precio }} Bs</td>
+                        <td class="td-stock">{{ $producto->stock }}</td>
+                        <td class="td-categoria">{{ $producto->categoria->nombre }}</td>
                         <td>
-                            <button class="btn-editar" data-id="{{ $producto->id }}">Editar</button>
+                            <button
+                                class="btn-editar"
+                                data-id="{{ $producto->id }}"
+                                data-imagen="{{ $producto->imagen ? asset('storage/'.$producto->imagen) : '' }}"
+                                data-categoria="{{ $producto->categoria_id }}"
+                            >Editar</button>
+
                             <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -97,7 +115,7 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2><i class="fas fa-edit"></i> Editar Producto</h2>
-        <form id="editForm" method="POST">
+        <form id="editForm" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <input type="hidden" id="editId" name="id">
@@ -118,7 +136,16 @@
                 @endforeach
             </select>
 
-            <button type="submit" class="btn btn-agregar">
+            <label for="editImagen"><i class="fas fa-image"></i> Cambiar imagen (opcional):</label>
+            <label class="custom-file-label" for="editImagen">Seleccionar nueva imagen</label>
+            <input type="file" id="editImagen" name="imagen" accept="image/*">
+
+
+            <div class="imagen-preview" style="margin-top:10px;">
+                <img id="editPreview" src="{{ asset('img/defecto.png') }}" alt="Preview" style="width:120px; height:80px; object-fit:cover; border-radius:6px;">
+            </div>
+
+            <button type="submit" class="btn btn-agregar" style="margin-top:10px;">
                 <i class="fas fa-save"></i> Guardar Cambios
             </button>
         </form>
