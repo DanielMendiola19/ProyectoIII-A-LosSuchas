@@ -1,0 +1,624 @@
+/* 🎨 Paleta de colores */
+        :root {
+            --negro-carbon: #0D0D0D;
+            --dorado: #E6B325;
+            --blanco-hueso: #FAF9F6;
+            --gris-suave: #C0C0C0;
+            --cafe-espresso: #4B2E2E;
+            
+            --borrar-terracota: #A85C50;        /* Sofisticado, combina con café-espresso */
+            --borrar-oxido: #9C4A3D;            /* Elegante para hover */
+            --borrar-vino: #8B3A35;             /* Profesional y discreto */
+
+            --editar-dorado-apagado: #C9A467;   /* Variante más suave de tu dorado */
+            --editar-dorado-hover: #B89352;     /* Coherente con tu paleta */
+            --editar-verde-musgo: #7A8D6B;      /* Natural y elegante */
+
+
+            --dorado-hover: #c9981f;
+            --verde-exito: #5cb85c;
+            --azul-info: #5bc0de;
+        }
+
+        /* Body */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
+            color: var(--blanco-hueso);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header con efecto dorado */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header h1 {
+            color: var(--dorado);
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(230, 179, 37, 0.5);
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+        }
+
+        /* Tarjetas de formulario y tabla */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(230, 179, 37, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Formulario */
+        .formulario label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+            color: var(--dorado);
+        }
+
+        .formulario input, 
+        .formulario select {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box; /* padding + border incluido */
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(230, 179, 37, 0.3);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--blanco-hueso);
+            transition: all 0.3s;
+            -webkit-appearance: none;  
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Fondo y color de las opciones del select */
+        .formulario select option {
+            background-color: var(--cafe-espresso);
+            color: var(--blanco-hueso);
+        }
+
+        /* Estilo cuando el select está enfocado */
+        .formulario select:focus {
+            border-color: var(--dorado);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(230, 179, 37, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+
+        /* Flecha personalizada */
+        .formulario select::-ms-expand { display: none; } /* IE */
+        .formulario select::after {
+            content: "▼";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--blanco-hueso);
+        }
+
+
+        /* Botones mejorados */
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-agregar {
+            background: linear-gradient(135deg, var(--dorado), var(--dorado-hover));
+            color: var(--negro-carbon);
+            font-size: 1.1rem;
+        }
+
+        .btn-agregar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 179, 37, 0.4);
+        }
+
+        .btn-editar {
+     /* Propiedades del estilo anterior */
+        background-color: var(--editar-dorado-apagado);
+        color: var(--negro-carbon);
+        border: 2px solid var(--editar-dorado-apagado);
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        /* Para mostrar el icono correctamente */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        }
+
+        .btn-editar:hover {
+            background-color: var(--editar-dorado-hover);
+            color: var(--blanco-hueso);
+            transform: scale(1.05);
+        }
+
+        .btn-eliminar {
+            background-color: var(--borrar-vino);
+            color: var(--blanco-hueso);
+            border: 2px solid var(--borrar-vino);
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-eliminar:hover {
+            background-color: var(--borrar-oxido);
+            color: var(--blanco-hueso);
+            transform: scale(1.05);
+        }
+
+        /* Tabla mejorada */
+        .tabla-container {
+            margin: 0 auto;          /* centra horizontalmente */
+            width: 90%;              /* ocupa más espacio de la pantalla */
+            max-width: 1200px;       /* evita que sea demasiado grande */
+            overflow-x: auto;        /* permite scroll horizontal en pantallas pequeñas */
+            padding: 10px 0;
+        }
+        /* Tabla ocupa todo el contenedor */
+        .tabla-container table {
+            width: 100%;          /* llena todo el ancho disponible */
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Centrar contenido y padding de celdas */
+        .tabla-container th,
+        .tabla-container td {
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Títulos con degradado y línea inferior */
+        .tabla-container th {
+            background: linear-gradient(135deg, var(--negro-carbon), var(--cafe-espresso));
+            color: var(--dorado);
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .tabla-container th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: var(--dorado);
+        }
+
+        /* Filas con hover y colores alternos */
+        .tabla-container tr {
+            transition: background 0.3s;
+        }
+
+        .tabla-container tr:hover {
+            background: rgba(230, 179, 37, 0.1);
+        }
+
+        .tabla-container tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tabla-container tr:nth-child(even):hover {
+            background: rgba(230, 179, 37, 0.15);
+        }
+
+
+        .tabla table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tabla th {
+            background: linear-gradient(135deg, var(--negro-carbon), var(--cafe-espresso));
+            color: var(--dorado);
+            padding: 15px;
+            text-align: center;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .tabla th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: var(--dorado);
+        }
+
+        .tabla td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tabla tr {
+            transition: background 0.3s;
+        }
+
+        .tabla tr:hover {
+            background: rgba(230, 179, 37, 0.1);
+        }
+
+        .tabla tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tabla tr:nth-child(even):hover {
+            background: rgba(230, 179, 37, 0.15);
+        }
+
+        /* Badges para categorías */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Nuevos colores para las categorías */
+        .badge-bebidas {
+            background: rgba(255, 102, 102, 0.2); /* rojo suave */
+            color: #FF6666; /* rojo para el texto */
+            border: 1px solid #FF6666;
+        }
+
+        .badge-comida {
+            background: rgba(102, 204, 255, 0.2); /* celeste suave */
+            color: #66CCFF; /* celeste para el texto */
+            border: 1px solid #66CCFF;
+        }
+
+        .badge-postres {
+            background: rgba(255, 204, 102, 0.2); /* naranja suave */
+            color: #FFCC66; /* naranja para el texto */
+            border: 1px solid #FFCC66;
+        }
+
+
+
+
+        /* Modal mejorado */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--negro-carbon), var(--cafe-espresso));
+            width: 450px;
+            max-width: 90%;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--dorado);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* espacio entre campos */
+        }
+
+        .modal-content label {
+            font-weight: bold;
+            color: var(--dorado);
+        }
+
+        .modal-content input,
+        .modal-content select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 10px 10px 10px; /* quitar padding extra que estaba causando problema */
+            border-radius: 8px;
+            border: 1px solid rgba(230, 179, 37, 0.3);
+            background-color: rgba(0,0,0,0.3); /* fondo oscuro visible */
+            color: var(--blanco-hueso); /* texto blanco */
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        /* Focus */
+        .modal-content select:focus {
+            border-color: var(--dorado);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(230, 179, 37, 0.3);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        /* Flecha simple con padding + unicode */
+        .modal-content select {
+            background-image: none; /* quitar background-image que no funciona */
+        }
+
+        .modal-content select::after {
+            content: "▼"; 
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--blanco-hueso);
+        }
+
+
+
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dorado);
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .close:hover {
+            color: var(--blanco-hueso);
+            transform: rotate(90deg);
+        }
+
+        /* Notificaciones mejoradas */
+        .notificacion {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: none;
+            animation: slideInRight 0.3s, slideOutRight 0.3s 2.7s;
+            max-width: 300px;
+        }
+
+        .notificacion.exito {
+            background-color: var(--verde-exito);
+            color: white;
+        }
+
+        .notificacion.error {
+            background-color: var(--rojo-eliminar);
+            color: white;
+        }
+
+        .notificacion.info {
+            background-color: var(--azul-info);
+            color: white;
+        }
+
+        /* Estadísticas */
+        .estadisticas {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .estadistica {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            min-width: 150px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .estadistica:hover {
+            transform: translateY(-5px);
+        }
+
+        .estadistica .valor {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dorado);
+            margin: 10px 0;
+        }
+
+        .estadistica .etiqueta {
+            font-size: 0.9rem;
+            color: var(--gris-suave);
+        }
+
+
+
+/* Imagen en tabla */
+.tabla td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(230, 179, 37, 0.3);
+}
+
+/* Badges por categoría */
+.tabla td .badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* Colores por categoría */
+.tabla td .badge-bebidas {
+    background-color: #FF6666; /* rojo suave */
+    color: #FFFFFF;
+}
+
+.tabla td .badge-comida {
+    background-color: #66CCFF; /* azul */
+    color: #000000;
+}
+
+.tabla td .badge-postres {
+    background-color: #FFCC66; /* amarillo/naranja */
+    color: #000000;
+}
+
+/* Centrar lista de productos */
+.tabla-container {
+    width: 90%;
+    margin: 0 auto;
+    overflow-x: auto; /* para pantallas pequeñas */
+}
+
+/* Ajuste de select en modal para que se vea bien */
+.modal-content select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--blanco-hueso);
+}
+
+
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .estadisticas {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .estadistica {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .tabla-container {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+        }
