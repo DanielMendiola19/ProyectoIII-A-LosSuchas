@@ -36,8 +36,21 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-// CRUD de productos
-Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
-Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
-Route::put('/productos/{id}', [ProductoController::class, 'update'])->name('productos.update');
-Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+
+// CRUD de productos protegido
+Route::get('/productos', [ProductoController::class, 'index'])
+    ->middleware('auth')
+    ->name('productos.index');
+
+Route::post('/productos', [ProductoController::class, 'store'])
+    ->middleware('auth')
+    ->name('productos.store');
+
+Route::put('/productos/{id}', [ProductoController::class, 'update'])
+    ->middleware('auth')
+    ->name('productos.update');
+
+Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('productos.destroy');
+
