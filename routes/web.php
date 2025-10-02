@@ -38,7 +38,6 @@ Route::get('/dashboard', function () {
 
 // CRUD de productos
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
-Route::get('/', [ProductoController::class, 'index'])->name('productos.index');
 Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
 Route::put('/productos/{id}', [ProductoController::class, 'update'])->name('productos.update');
 Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
