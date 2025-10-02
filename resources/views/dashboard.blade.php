@@ -5,6 +5,7 @@
     <title>Panel de Control - Coffeeology</title>
     <!-- Tipografías -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* RESET */
@@ -179,6 +180,7 @@
     </style>
 </head>
 <body>
+
     <!-- SIDEBAR -->
     <div class="sidebar">
         <!-- LOGO -->
@@ -192,7 +194,62 @@
         <a href="#">Reportes</a>
         <a href="#">Configuración</a>
         <hr>
+
+        {{-- 🔑 Auth Links --}}
+        <!-- Icono de persona siempre visible -->
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
+            <div style="
+                background-color: #E6B325;   /* color del círculo */
+                border-radius: 50%;          /* lo hace redondo */
+                width: 60px;                 /* tamaño del círculo */
+                height: 60px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 0 12px rgba(230,179,37,0.5);
+                transition: all 0.3s;
+            ">
+                <i class="bi bi-person-fill" style="font-size: 2rem; color: #0D0D0D;"></i>
+            </div>
+        </div>
+
+
+        @guest
+            <!-- Si NO está logueado -->
+            <a href="{{ route('login.form') }}">
+                Iniciar Sesión
+            </a>
+        @else
+            <!-- Si está logueado -->
+            <div style="margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(230,179,37,0.1); text-align: center; box-shadow: 0 0 15px rgba(230,179,37,0.2);">
+                <p style="margin-bottom: 6px; font-weight: bold; color: #E6B325;">
+                    {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
+                </p>
+                <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
+                    {{ Auth::user()->correo }}
+                </p>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" 
+                        style="background:#7A0F0F; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+
+            <style>
+                /* Hover glow dorado */
+                .sidebar form button:hover {
+                    background:#5C0B0B;
+                    box-shadow: 0 0 10px rgba(230,179,37,0.6);
+                }
+            </style>
+        @endguest
+
     </div>
+
+
 
     <!-- CONTENIDO -->
     <div class="content">

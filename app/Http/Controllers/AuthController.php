@@ -175,8 +175,8 @@ class AuthController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Inicio de sesión exitoso'], 200);
         }
-        return redirect('/bienvenida'); // Redirige al dashboard real
-        //return redirect('/dashboard'); // Redirige al dashboard real
+        //return redirect('/bienvenida'); // Redirige al dashboard real
+        return redirect('/');
     }
 
     public function logout(Request $request)

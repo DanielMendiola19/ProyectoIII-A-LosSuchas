@@ -145,8 +145,8 @@
             text: data.message || 'Inicio de sesión exitoso',
             confirmButtonText: 'Aceptar'
           }).then(() => { 
-            //window.location.href = "/dashboard";
-            window.location.href = "/bienvenida";  
+            window.location.href = "/";
+            //window.location.href = "/bienvenida";  
           });
         }
 
