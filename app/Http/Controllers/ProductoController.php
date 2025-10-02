@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -21,10 +22,18 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:100',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
-            'categoria_id' => 'required|exists:categorias,id'
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        Producto::create($request->all());
+        $data = $request->only(['nombre','precio','stock','categoria_id']);
+
+        if ($request->hasFile('imagen')) {
+            // guarda en storage/app/public/productos/...
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        Producto::create($data);
 
         return back()->with('success', 'Producto agregado correctamente');
     }
@@ -35,11 +44,23 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:100',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
-            'categoria_id' => 'required|exists:categorias,id'
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
         $producto = Producto::findOrFail($id);
-        $producto->update($request->all());
+
+        $data = $request->only(['nombre','precio','stock','categoria_id']);
+
+        if ($request->hasFile('imagen')) {
+            // eliminar imagen anterior si existe
+            if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        $producto->update($data);
 
         return back()->with('success', 'Producto actualizado correctamente');
     }
@@ -47,6 +68,12 @@ class ProductoController extends Controller
     public function destroy($id)
     {
         $producto = Producto::findOrFail($id);
+
+        // eliminar imagen asociada si existe
+        if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
+            Storage::disk('public')->delete($producto->imagen);
+        }
+
         $producto->delete();
 
         return back()->with('success', 'Producto eliminado correctamente');
