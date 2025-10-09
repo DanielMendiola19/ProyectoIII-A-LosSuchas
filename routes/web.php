@@ -33,10 +33,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Dashboard (accesible solo a usuarios autenticados)
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware('auth')->name('dashboard');
+})->name('dashboard');
 
 // 🔒 Rutas protegidas por rol
-// Solo Administrador puede acceder a los módulos de productos
 Route::middleware(['auth', 'role:Administrador'])->group(function () {
     Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
     Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
