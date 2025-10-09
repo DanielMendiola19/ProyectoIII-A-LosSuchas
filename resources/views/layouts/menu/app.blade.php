@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $__env->yieldContent('title', 'Coffeeology'); ?></title>
+    <title>@yield('title', 'Coffeeology')</title>
 
-    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
 
     <!-- CSS propio -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/productos/app.css')); ?>">
+    <link rel="stylesheet" href="{{ asset('css/menu/menu.css') }}">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -280,7 +280,7 @@
         }
     </style>
 
-    <?php echo $__env->yieldPushContent('styles'); ?>
+    @stack('styles')
 </head>
 <body>
     <!-- Botón menú móvil -->
@@ -294,21 +294,21 @@
     <!-- ================= SIDEBAR ================= -->
     <div class="sidebar" id="sidebar">
         <div class="logo-container">
-            <img src="<?php echo e(asset('images/logo.png')); ?>" alt="Logo Coffeeology" class="sidebar-logo">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo Coffeeology" class="sidebar-logo">
         </div>
 
         <h2>Coffeeology</h2>
             <div class="sidebar-nav">
-                <a href="<?php echo e(route('dashboard')); ?>"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-                <a href="<?php echo e(route('productos.index')); ?>"><i class="fas fa-coffee me-2"></i> Productos</a>
-                <a href="<?php echo e(route('menu.index')); ?>"><i class="fas fa-store me-2"></i> Menu</a>
+                <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+                <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
+                <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
             </div>
         <hr>
 
-        
+        {{-- 🔑 Auth Links --}}
         <!-- Icono de persona siempre visible -->
         <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
             <div style="
@@ -327,25 +327,23 @@
         </div>
 
 
-        <?php if(auth()->guard()->guest()): ?>
+        @guest
             <!-- Si NO está logueado -->
-            <a href="<?php echo e(route('login.form')); ?>">
+            <a href="{{ route('login.form') }}">
                 Iniciar Sesión
             </a>
-        <?php else: ?>
+        @else
             <!-- Si está logueado -->
             <div style="margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(230,179,37,0.1); text-align: center; box-shadow: 0 0 15px rgba(230,179,37,0.2);">
                 <p style="margin-bottom: 6px; font-weight: bold; color: #E6B325;">
-                    <?php echo e(Auth::user()->nombre); ?> <?php echo e(Auth::user()->apellido); ?>
-
+                    {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
                 </p>
                 <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
-                    <?php echo e(Auth::user()->correo); ?>
-
+                    {{ Auth::user()->correo }}
                 </p>
 
-                <form method="POST" action="<?php echo e(route('logout')); ?>">
-                    <?php echo csrf_field(); ?>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
                     <button type="submit" 
                         style="background:#7A0F0F; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
                         Cerrar Sesión
@@ -360,17 +358,14 @@
                     box-shadow: 0 0 10px rgba(230,179,37,0.6);
                 }
             </style>
-        <?php endif; ?>
+        @endguest
 
     </div>
 
     <!-- ================= CONTENIDO ================= -->
     <div class="content" id="mainContent">
-        <?php echo $__env->yieldContent('content'); ?>
+        @yield('content')
     </div>
-
-    <!-- JS propio -->
-    <script src="<?php echo e(asset('js/productos/app.js')); ?>"></script>
 
     <script>
         // Funcionalidad del menú móvil
@@ -419,6 +414,6 @@
         });
     </script>
 
-    <?php echo $__env->yieldPushContent('scripts'); ?>
+    @stack('scripts')
 </body>
-</html><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/layouts/productos/app.blade.php ENDPATH**/ ?>
+</html>
