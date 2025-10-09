@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\MenuController;
 
 
 // Página inicial -> splash
@@ -53,3 +54,5 @@ Route::put('/productos/{id}', [ProductoController::class, 'update'])
 Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
     ->middleware('auth')
     ->name('productos.destroy');
+
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');

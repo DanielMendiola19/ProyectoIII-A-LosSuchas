@@ -75,7 +75,18 @@
             position: relative;
             z-index: 1000;
             transition: all 0.3s ease;
+            overflow-y: auto;      /* Permite scroll vertical */
+            -webkit-overflow-scrolling: touch; /* Suaviza el scroll en móviles */
         }
+        .sidebar::-webkit-scrollbar {
+            width: 6px;  /* Ancho del scroll */
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(230,179,37,0.6);
+            border-radius: 3px;
+        }
+
 
         .logo-container {
             text-align: center;
@@ -511,12 +522,14 @@
         </div>
 
         <h2>Coffeeology</h2>
-        <div class="sidebar-nav">
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('productos.index') }}">Productos</a>
-            <a href="#">Usuarios</a>
-            <a href="#">Reportes</a>
-            <a href="#">Configuración</a>
+            <div class="sidebar-nav">
+                <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+                <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
+                <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
+                <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
+                <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+                <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
+            </div>
             <hr>
 
             {{-- 🔑 Auth Links --}}
