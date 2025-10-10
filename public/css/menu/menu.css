@@ -1,0 +1,255 @@
+/* 🌟 Paleta coherente con el CRUD */
+:root {
+    --negro-carbon: #0D0D0D;
+    --dorado: #E6B325;
+    --blanco-hueso: #FAF9F6;
+    --gris-suave: #C0C0C0;
+    --cafe-espresso: #4B2E2E;
+    --dorado-hover: #c9981f;
+}
+
+/* Fondo general */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
+    color: var(--blanco-hueso);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    width: 100%;
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    color: var(--dorado);
+    font-size: 3rem;
+    text-shadow: 0 0 10px rgba(230, 179, 37, 0.5);
+    margin-bottom: 40px;
+    position: relative;
+    white-space: nowrap; /* 🔹 Evita salto de línea (Coffeeology en una sola línea) */
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+}
+
+/* ====== TÍTULO DE CATEGORÍA EN MENÚ ====== */
+.categoria-titulo {
+    margin-top: 60px;
+    color: var(--dorado);
+    font-size: 1.8rem;
+    border-left: 5px solid var(--dorado);
+    padding-left: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Playfair Display', serif;
+    text-align: left;
+}
+
+
+/* ================= GRID UNIFORME ================= */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* tamaño uniforme */
+    gap: 1.5rem;
+    margin: 2rem 0;
+    justify-items: center;
+}
+
+/* ================= TARJETAS ================= */
+.product-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(230, 179, 37, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    width: 220px;     /* 🔹 Tamaño fijo */
+    height: 270px;    /* 🔹 Todas iguales (≈4x4 cm visualmente) */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+    border-color: rgba(230, 179, 37, 0.4);
+}
+
+/* Imagen del producto */
+.product-card img {
+    width: 100%;
+    height: 160px; /* 🔹 Fijo: igual en todas */
+    object-fit: cover;
+    border-bottom: 1px solid rgba(230, 179, 37, 0.2);
+    transition: transform 0.3s ease;
+}
+
+/* No agrandar al pasar el mouse */
+.product-card:hover img {
+    transform: none;
+}
+
+/* Contenido del producto */
+.card-body {
+    padding: 0.8rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--blanco-hueso);
+    margin: 0.4rem 0;
+    line-height: 1.3;
+}
+
+.card-text {
+    color: var(--gris-suave);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Pie de tarjeta */
+.card-footer {
+    background: rgba(230, 179, 37, 0.1);
+    color: var(--dorado);
+    font-weight: bold;
+    padding: 0.8rem;
+    text-align: center;
+    border-top: 1px solid rgba(230, 179, 37, 0.2);
+    font-size: 1rem;
+}
+
+/* ================= ESTADO VACÍO ================= */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--gris-suave);
+    font-style: italic;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px dashed var(--gris-suave);
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablets */
+@media (max-width: 1023px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    .product-card {
+        width: 200px;
+        height: 260px;
+    }
+    .product-card img {
+        height: 150px;
+    }
+}
+
+/* Móviles */
+@media (max-width: 767px) {
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.3rem;
+    }
+    .products-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        padding: 0.5rem;
+        scroll-behavior: smooth;
+    }
+    .product-card {
+        flex: 0 0 auto;
+        width: 200px;
+        height: 250px;
+    }
+    .product-card img {
+        height: 140px;
+    }
+}
+
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Tarjetas uniformes */
+.product-card .card {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.product-card .card:hover {
+    transform: scale(1.03);
+}
+
+/* Tamaño fijo de imagen (4x4 proporción) */
+.fixed-size {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 🔹 Hace el cuadro exactamente cuadrado */
+    object-fit: contain; /* 🔹 No recorta la imagen */
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .products-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 10px;
+    }
+
+    .product-card {
+        flex: 0 0 auto;
+        width: 220px;
+        scroll-snap-align: start;
+    }
+}
+
+
+/* Pantallas grandes */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    .product-card {
+        width: 240px;
+        height: 290px;
+    }
+    .product-card img {
+        height: 180px;
+    }
+}
