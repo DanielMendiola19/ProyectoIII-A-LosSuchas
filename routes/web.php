@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PedidoController;
+
 
 
 // Página inicial -> splash
@@ -56,3 +58,8 @@ Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
     ->name('productos.destroy');
 
 Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
+    Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
+});

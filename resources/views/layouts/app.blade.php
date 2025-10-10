@@ -13,16 +13,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --negro-carbon: #0D0D0D;
+            --dorado: #E6B325;
+            --blanco-hueso: #FAF9F6;
+            --gris-suave: #C0C0C0;
+            --cafe-espresso: #4B2E2E;
+            --dorado-hover: #c9981f;
+            --verde-exito: #5cb85c;
+            --azul-info: #5bc0de;
+        }
+
         /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-color: #0D0D0D;
-            color: #FAF9F6;
+            background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
+            color: var(--blanco-hueso);
         }
 
         /* BOTÓN MENÚ MÓVIL */
@@ -168,59 +179,50 @@
         .content {
             flex: 1;
             padding: 20px;
-            background: linear-gradient(to bottom right, #0D0D0D, #1a1a1a);
+            background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
             overflow-y: auto;
             transition: all 0.3s ease;
             width: 100%;
         }
 
         .content h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 2rem;
-            color: #E6B325;
+            color: var(--dorado);
             margin-bottom: 30px;
             text-shadow: 0 0 10px rgba(230,179,37,0.5);
             text-align: center;
+            font-weight: bold;
         }
 
         /* TARJETAS */
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
         .card {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             padding: 25px;
-            border-radius: 18px;
+            border-radius: 15px;
             text-align: center;
-            font-family: 'Lora', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 1.1rem;
             font-weight: bold;
-            color: #FAF9F6;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            color: var(--blanco-hueso);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-            border: 2px solid #4B2E2E;
+            border: 1px solid rgba(230, 179, 37, 0.2);
             position: relative;
             overflow: hidden;
         }
-        .card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: -100%;
-            width: 200%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(230,179,37,0.2), transparent);
-            transition: all 0.6s;
-        }
-        .card:hover::after {
-            left: 100%;
-        }
         .card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 8px 30px rgba(230,179,37,0.4);
-            border-color: #E6B325;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(230, 179, 37, 0.4);
         }
 
         /* ESTADÍSTICAS */
@@ -230,18 +232,20 @@
             gap: 25px;
         }
         .stat-card {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            border-radius: 18px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            border: 2px solid #4B2E2E;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(230, 179, 37, 0.2);
         }
         .stat-card h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 1.4rem;
             margin-bottom: 15px;
-            color: #E6B325;
+            color: var(--dorado);
             text-shadow: 0 0 6px rgba(230,179,37,0.5);
+            font-weight: bold;
         }
         canvas { width: 100%; max-height: 300px; }
 
@@ -371,14 +375,14 @@
             }
             
             .cards {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 20px;
                 margin-bottom: 40px;
             }
             
             .card {
-                padding: 30px;
-                font-size: 1.2rem;
+                padding: 25px;
+                font-size: 1.1rem;
             }
             
             .stats {
@@ -431,14 +435,14 @@
             }
             
             .cards {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 25px;
                 margin-bottom: 50px;
             }
             
             .card {
-                padding: 35px;
-                font-size: 1.3rem;
+                padding: 25px;
+                font-size: 1.1rem;
             }
             
             .stats {
@@ -458,7 +462,7 @@
         /* Pantallas grandes */
         @media (min-width: 1200px) {
             .cards {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             }
         }
 
@@ -498,8 +502,8 @@
             }
 
             .card {
-                padding: 18px;
-                font-size: 0.95rem;
+                padding: 20px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -526,6 +530,7 @@
                 <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
                 <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
                 <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
+                <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
