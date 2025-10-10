@@ -16,8 +16,8 @@ class CategoriaSeeder extends Seeder
             ['nombre' => 'Bebidas', 'descripcion' => 'Cafés, jugos y otras bebidas'],
             ['nombre' => 'Comida', 'descripcion' => 'Alimentos como sandwiches y croissants'],
             ['nombre' => 'Postres', 'descripcion' => 'Dulces, pasteles y repostería'],
-            ['nombre' => 'Snacks', 'descripcion' => 'Aperitivos y bocadillos'],
-            ['nombre' => 'Promociones', 'descripcion' => 'Ofertas y combos especiales'],
+            ['nombre' => 'Combos', 'descripcion' => 'Combos especiales'],
+            ['nombre' => 'Promociones', 'descripcion' => 'Ofertas especiales'],
         ];
 
         foreach ($categorias as $categoria) {

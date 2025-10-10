@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
 
     <!-- CSS propio -->
-    <link rel="stylesheet" href="{{ asset('css/productos/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/menu/menu.css') }}">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -367,9 +367,6 @@
     <div class="content" id="mainContent">
         @yield('content')
     </div>
-
-    <!-- JS propio -->
-    <script src="{{ asset('js/productos/app.js') }}"></script>
 
     <script>
         // Funcionalidad del menú móvil
