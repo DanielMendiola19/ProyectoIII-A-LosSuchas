@@ -14,8 +14,12 @@ class PasswordTokenController extends Controller
      */
     public function showForgotPassword()
     {
+        if (session()->has('correo_recuperacion') && Carbon::now()->lessThan(session('correo_expira'))) {
+            return redirect()->route('password.verify.code.form');
+        }
         return view('auth.forgot-password');
     }
+
 
     /**
      * Validar correo y generar token
@@ -63,15 +67,26 @@ class PasswordTokenController extends Controller
      */
     public function showVerifyCode()
     {
-        // Validar sesión de correo
         if (!session()->has('correo_recuperacion') || Carbon::now()->greaterThan(session('correo_expira'))) {
             session()->forget(['correo_recuperacion', 'correo_expira']);
             return redirect()->route('password.request')
-                             ->with('error', 'El tiempo de espera acabó. Ingresa nuevamente tu correo.');
+                            ->with('error', 'El tiempo de espera acabó. Ingresa nuevamente tu correo.');
+        }
+
+        $correo = session('correo_recuperacion');
+
+        $ultimoToken = PasswordToken::where('correo', $correo)
+                            ->orderByDesc('created_at')
+                            ->first();
+
+        if ($ultimoToken && $ultimoToken->estado === 'usado') {
+            return redirect()->route('password.reset.form')
+                            ->with('success', 'Ya verificaste el código. Cambia tu contraseña.');
         }
 
         return view('auth.verify-code');
     }
+
 
     /**
      * Validar token ingresado
@@ -129,4 +144,36 @@ class PasswordTokenController extends Controller
         return redirect()->route('password.reset.form')
                          ->with('success', 'Código verificado correctamente. Ahora puedes cambiar tu contraseña.');
     }
+
+    public function resendToken(Request $request)
+{
+    $correo = session('correo_recuperacion');
+
+    if (!$correo) {
+        return response()->json(['error' => 'No hay sesión de correo activa.'], 422);
+    }
+
+    // Expirar tokens anteriores
+    PasswordToken::where('correo', $correo)
+        ->where('estado', 'activo')
+        ->update(['estado' => 'expirado']);
+
+    // Generar nuevo token
+    $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expiresAt = Carbon::now()->addMinutes(5);
+
+    $nuevoToken = PasswordToken::create([
+        'correo' => $correo,
+        'token' => $token,
+        'estado' => 'activo',
+        'expires_at' => $expiresAt,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'token' => $nuevoToken->token,
+        'expires_at' => $nuevoToken->expires_at->toDateTimeString(),
+    ]);
+}
+
 }

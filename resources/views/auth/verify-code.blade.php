@@ -101,49 +101,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Countdown para reenviar
     let countdown = 15;
-    let timer = setInterval(() => {
-        countdown--;
-        countdownEl.textContent = countdown;
-        if(countdown <= 0){
-            clearInterval(timer);
-            resendBtn.disabled = false;
-            countdownEl.parentElement.textContent = 'Reenviar código';
-        }
-    },1000);
-
-    resendBtn.addEventListener('click', async () => {
+    function startCountdown() {
         resendBtn.disabled = true;
         countdown = 15;
         countdownEl.textContent = countdown;
-        countdownEl.parentElement.innerHTML = 'Reenviar código (<span id="countdown">15</span>s)';
-        timer = setInterval(() => {
+        const timer = setInterval(() => {
             countdown--;
             countdownEl.textContent = countdown;
-            if(countdown <= 0){
+            if (countdown <= 0) {
                 clearInterval(timer);
                 resendBtn.disabled = false;
-                countdownEl.parentElement.textContent = 'Reenviar código';
             }
-        },1000);
+        }, 1000);
+    }
 
-        // 🔹 Llamada POST para generar token de nuevo
+    startCountdown();
+
+    resendBtn.addEventListener('click', async () => {
+        startCountdown();
+
         const correo = document.querySelector('input[name="correo"]').value;
         const token = document.querySelector('input[name="_token"]').value;
+
         try {
-            const res = await fetch("{{ route('password.send') }}", {
+            cconst res = await fetch("{{ route('password.resend') }}", {
                 method: 'POST',
-                headers: {'Accept':'application/json','X-CSRF-TOKEN': token},
-                body: new URLSearchParams({correo})
+                headers: {
+                    'Accept':'application/json',
+                    'X-CSRF-TOKEN': token
+                },
             });
             const data = await res.json();
-            if(data.token){
-                alert('Se generó un nuevo código (temporal)');
+            if(data.success){
+                alert('Se generó un nuevo código (temporal): ' + data.token);
             }
+
         } catch(err){
             alert('Error al generar nuevo código.');
             console.error(err);
         }
     });
+
 });
 
 </script>

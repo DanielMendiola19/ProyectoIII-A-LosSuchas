@@ -66,3 +66,6 @@ Route::post('/reset-password', [PasswordTokenController::class, 'resetPassword']
 
 
 Route::get('/generar-token', [PasswordTokenController::class, 'generateToken'])->name('token.generate');
+
+Route::post('/resend-token', [PasswordTokenController::class, 'resendToken'])
+     ->name('password.resend');
