@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PasswordTokenController;
 use Illuminate\Support\Facades\Auth;
 
 // Página inicial -> splash
@@ -46,29 +47,22 @@ Route::middleware(['auth', 'role:Administrador'])->group(function () {
 
 
 
-// Mostrar formulario para ingresar correo y solicitar código
-Route::get('/forgot-password', function() {
-    return view('auth.forgot-password'); // vista que vamos a crear
-})->name('password.request');
+// =========================
+// Recuperación de contraseña
+// =========================
+Route::get('/forgot-password', [PasswordTokenController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [PasswordTokenController::class, 'sendToken'])->name('password.send');
 
-Route::post('/forgot-password', function() {
-    // Aquí iría la lógica para enviar el código
-})->name('password.send');
+Route::get('/verify-code', [PasswordTokenController::class, 'showVerifyCode'])->name('password.verify.code.form');
+Route::post('/verify-code', [PasswordTokenController::class, 'checkCode'])->name('password.check.code');
 
-// Mostrar formulario para ingresar código recibido
-Route::get('/verify-code', function() {
-    return view('auth.verify-code'); // vista que vamos a crear
-})->name('password.verify.code');
-
-Route::post('/verify-code', function() {
-    // Aquí iría la lógica para validar el código
-})->name('password.check.code');
-
-// Mostrar formulario para restablecer contraseña
 Route::get('/reset-password', function() {
-    return view('auth.reset-password'); // vista que vamos a crear
+    return view('auth.reset-password');
 })->name('password.reset.form');
 
-Route::post('/reset-password', function() {
-    // Aquí iría la lógica para guardar nueva contraseña
-})->name('password.reset');
+// web.php
+Route::post('/reset-password', [PasswordTokenController::class, 'resetPassword'])
+    ->name('password.reset');
+
+
+Route::get('/generar-token', [PasswordTokenController::class, 'generateToken'])->name('token.generate');

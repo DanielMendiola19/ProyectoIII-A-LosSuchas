@@ -42,6 +42,14 @@
             <span class="error" id="error-password"></span>
         </div>
 
+        <!-- Enlace "Olvidaste tu contraseña" -->
+        <p style="text-align:right; margin-top:-10px; margin-bottom:15px;">
+            <a href="{{ route('password.request') }}" class="forgot-link">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </p>
+
+
         <button type="submit" class="btn">Ingresar</button>
         <p class="switch">¿No tienes cuenta? <a href="{{ route('signup.form') }}">Regístrate</a></p>
     </form>

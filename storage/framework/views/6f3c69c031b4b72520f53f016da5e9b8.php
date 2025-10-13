@@ -42,6 +42,14 @@
             <span class="error" id="error-password"></span>
         </div>
 
+        <!-- Enlace "Olvidaste tu contraseña" -->
+        <p style="text-align:right; margin-top:-10px; margin-bottom:15px;">
+            <a href="<?php echo e(route('password.request')); ?>" class="forgot-link">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </p>
+
+
         <button type="submit" class="btn">Ingresar</button>
         <p class="switch">¿No tienes cuenta? <a href="<?php echo e(route('signup.form')); ?>">Regístrate</a></p>
     </form>
