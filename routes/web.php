@@ -42,3 +42,33 @@ Route::middleware(['auth', 'role:Administrador'])->group(function () {
     Route::put('/productos/{id}', [ProductoController::class, 'update'])->name('productos.update');
     Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 });
+
+
+
+
+// Mostrar formulario para ingresar correo y solicitar código
+Route::get('/forgot-password', function() {
+    return view('auth.forgot-password'); // vista que vamos a crear
+})->name('password.request');
+
+Route::post('/forgot-password', function() {
+    // Aquí iría la lógica para enviar el código
+})->name('password.send');
+
+// Mostrar formulario para ingresar código recibido
+Route::get('/verify-code', function() {
+    return view('auth.verify-code'); // vista que vamos a crear
+})->name('password.verify.code');
+
+Route::post('/verify-code', function() {
+    // Aquí iría la lógica para validar el código
+})->name('password.check.code');
+
+// Mostrar formulario para restablecer contraseña
+Route::get('/reset-password', function() {
+    return view('auth.reset-password'); // vista que vamos a crear
+})->name('password.reset.form');
+
+Route::post('/reset-password', function() {
+    // Aquí iría la lógica para guardar nueva contraseña
+})->name('password.reset');
