@@ -41,6 +41,11 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 
+Route::get('/informacion', function () {
+    return view('informacion.index');
+})->name('informacion.index');
+
+
 // CRUD de productos protegido
 Route::get('/productos', [ProductoController::class, 'index'])
     ->middleware('auth')

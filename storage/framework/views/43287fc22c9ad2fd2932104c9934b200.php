@@ -23,8 +23,8 @@
         <div class="card">
             <i class="fas fa-chart-bar"></i> Reportes
         </div>
-        <div class="card">
-            <i class="fas fa-cog"></i> Configuración
+        <div class="card" onclick="location.href='<?php echo e(route('informacion.index')); ?>'">
+            <i class="fa-solid fa-circle-info"></i> Información
         </div>
     </div>
 

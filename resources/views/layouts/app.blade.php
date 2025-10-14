@@ -536,7 +536,7 @@
                 <a href="{{ route('mesas.index') }}"><i class="fas fa-chair me-2"></i> Mesas</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
-                <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
+                <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info"></i> Informacion</a>
             </div>
             <hr>
 
