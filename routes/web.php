@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\MesaController;
 
 
 
@@ -56,10 +57,22 @@ Route::put('/productos/{id}', [ProductoController::class, 'update'])
 Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
     ->middleware('auth')
     ->name('productos.destroy');
+Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
+Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
 
 Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
     Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
+});
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/mesas', [MesaController::class, 'index'])->name('mesas.index');
+    Route::post('/mesas', [MesaController::class, 'store'])->name('mesas.store');
+    Route::put('/mesas/{mesa}', [MesaController::class, 'update'])->name('mesas.update');
+    Route::delete('/mesas/{mesa}', [MesaController::class, 'destroy'])->name('mesas.destroy');
+    Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
 });

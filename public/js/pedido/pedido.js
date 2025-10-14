@@ -2,84 +2,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const carrito = [];
     const btnCarrito = document.getElementById('btnCarrito');
     const modalCarrito = document.getElementById('modalCarrito');
+    const modalMesa = document.getElementById('modalMesa'); // Cambiado de modalMesas
     const modalPago = document.getElementById('modalPago');
     const listaCarrito = document.getElementById('listaCarrito');
     const contadorCarrito = document.getElementById('contadorCarrito');
     const totalSpan = document.getElementById('total');
     const btnCerrarCarrito = document.getElementById('btnCerrarCarrito');
-    const btnSiguiente = document.getElementById('btnSiguiente');
+    const btnSiguiente = document.getElementById('btnSiguiente'); // Cambiado de btnSiguienteCarrito
+    const btnMesaSiguiente = document.getElementById('btnMesaSiguiente'); // Cambiado de btnSiguienteMesas
+    const btnCancelarMesa = document.getElementById('btnCancelarMesa'); // Cambiado de btnCerrarMesas
     const btnCancelarPago = document.getElementById('btnCancelarPago');
     const formPedido = document.getElementById('formPedido');
 
-    // --- AGREGAR PRODUCTO AL CARRITO (click en cualquier parte de la tarjeta) ---
-    document.addEventListener('click', (e) => {
-        // Encontrar la tarjeta del producto clickeada
-        const productCard = e.target.closest('.product-card');
-        if (!productCard) return;
+    let mesaSeleccionada = null;
 
-        // Evitar que se active cuando se hace click en el botón específico (para no duplicar)
-        if (e.target.classList.contains('btn-agregar') || e.target.closest('.btn-agregar')) {
-            return; // Dejar que el evento del botón maneje esto
-        }
-
-        const id = productCard.dataset.id;
-        const nombre = productCard.dataset.nombre;
-        const precio = parseFloat(productCard.dataset.precio);
-        const imagen = productCard.dataset.imagen;
-
-        const existente = carrito.find(p => p.id == id);
-        if (existente) {
-            existente.cantidad++;
-        } else {
-            carrito.push({ id, nombre, precio, imagen, cantidad: 1 });
-        }
-
-        actualizarCarrito();
-
-        // Efecto visual en toda la tarjeta
-        productCard.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            productCard.style.transform = '';
-        }, 200);
-
-        // Mostrar confirmación
-        mostrarNotificacion(`✅ ${nombre} agregado al carrito`, 'exito');
-    });
-
-    // --- AGREGAR PRODUCTO CON BOTÓN ESPECÍFICO ---
+    // --- AGREGAR PRODUCTO AL CARRITO ---
     document.addEventListener('click', (e) => {
         const boton = e.target.closest('.btn-agregar');
-        if (!boton) return;
-
-        const card = boton.closest('.product-card');
+        const card = e.target.closest('.product-card');
+        
         if (!card) return;
 
+        if (boton) {
+            agregarAlCarrito(card, boton);
+        }
+    });
+
+    function agregarAlCarrito(card, boton = null) {
         const id = card.dataset.id;
         const nombre = card.dataset.nombre;
         const precio = parseFloat(card.dataset.precio);
         const imagen = card.dataset.imagen;
+        const stock = parseInt(card.dataset.stock);
 
         const existente = carrito.find(p => p.id == id);
         if (existente) {
+            if (existente.cantidad >= stock) {
+                mostrarNotificacion(`⚠️ Stock insuficiente para ${nombre}`, 'error');
+                return;
+            }
             existente.cantidad++;
         } else {
-            carrito.push({ id, nombre, precio, imagen, cantidad: 1 });
+            if (stock <= 0) {
+                mostrarNotificacion(`⚠️ ${nombre} sin stock`, 'error');
+                return;
+            }
+            carrito.push({ id, nombre, precio, imagen, cantidad: 1, stock });
         }
 
         actualizarCarrito();
+        mostrarNotificacion(`✅ ${nombre} agregado al carrito`, 'exito');
 
-        // Efecto visual específico del botón
-        const originalHTML = boton.innerHTML;
-        const originalBackground = boton.style.background;
-        
-        boton.style.background = 'var(--verde-exito)';
-        boton.innerHTML = '<i class="fas fa-check"></i> Agregado';
-        
-        setTimeout(() => {
-            boton.style.background = originalBackground;
-            boton.innerHTML = originalHTML;
-        }, 1000);
-    });
+        if (boton) {
+            boton.innerHTML = '<i class="fas fa-check"></i> Agregado';
+            boton.style.background = 'var(--verde-exito)';
+            setTimeout(() => {
+                boton.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar';
+                boton.style.background = '';
+            }, 1000);
+        }
+    }
 
     // --- ACTUALIZAR CARRITO ---
     function actualizarCarrito() {
@@ -91,12 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="carrito-vacio">
                     <i class="fas fa-shopping-cart"></i>
                     <p>Tu carrito está vacío</p>
-                </div>
-            `;
+                </div>`;
         } else {
             carrito.forEach((p, i) => {
                 total += p.precio * p.cantidad;
-
                 const item = document.createElement('div');
                 item.classList.add('carrito-item');
                 item.innerHTML = `
@@ -110,15 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <button class="cantidad-btn" data-index="${i}" data-action="mas">+</button>
                             </div>
                             <div class="precio-info">
-                                <span class="precio-unitario">Bs ${p.precio.toFixed(2)} c/u</span>
-                                <strong class="precio-total">Bs ${(p.precio * p.cantidad).toFixed(2)}</strong>
+                                <span>Bs ${p.precio.toFixed(2)} c/u</span>
+                                <strong>Bs ${(p.precio * p.cantidad).toFixed(2)}</strong>
                             </div>
                         </div>
                         <button class="btn-eliminar-item" data-index="${i}">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                `;
+                    </div>`;
                 listaCarrito.appendChild(item);
             });
         }
@@ -129,24 +108,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CONTROL DE CANTIDAD Y ELIMINAR ---
     listaCarrito.addEventListener('click', (e) => {
-        const botonCantidad = e.target.closest('.cantidad-btn');
-        if (botonCantidad) {
-            const index = parseInt(botonCantidad.dataset.index);
-            const action = botonCantidad.dataset.action;
+        const btn = e.target.closest('.cantidad-btn');
+        const eliminar = e.target.closest('.btn-eliminar-item');
 
-            if (action === 'mas') carrito[index].cantidad++;
-            if (action === 'menos') {
+        if (btn) {
+            const index = btn.dataset.index;
+            const action = btn.dataset.action;
+
+            if (action === 'mas' && carrito[index].cantidad < carrito[index].stock) {
+                carrito[index].cantidad++;
+            } else if (action === 'menos') {
                 carrito[index].cantidad--;
                 if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+            } else if (carrito[index].cantidad >= carrito[index].stock) {
+                mostrarNotificacion(`⚠️ Stock insuficiente para ${carrito[index].nombre}`, 'error');
             }
 
             actualizarCarrito();
-            return;
         }
 
-        const botonEliminar = e.target.closest('.btn-eliminar-item');
-        if (botonEliminar) {
-            const index = parseInt(botonEliminar.dataset.index);
+        if (eliminar) {
+            const index = eliminar.dataset.index;
             carrito.splice(index, 1);
             actualizarCarrito();
         }
@@ -155,41 +137,77 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MODALES ---
     btnCarrito.addEventListener('click', () => {
         if (carrito.length === 0) {
-            mostrarNotificacion('🛒 Carrito vacío - Agrega algunos productos', 'info');
+            mostrarNotificacion('🛒 Carrito vacío', 'info');
             return;
         }
-        modalCarrito.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        abrirModal(modalCarrito);
     });
 
-    btnCerrarCarrito.addEventListener('click', () => {
-        modalCarrito.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    });
+    btnCerrarCarrito.addEventListener('click', () => cerrarModal(modalCarrito));
 
     btnSiguiente.addEventListener('click', () => {
-        modalCarrito.style.display = 'none';
-        modalPago.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        cerrarModal(modalCarrito);
+        abrirModal(modalMesa);
     });
 
-    btnCancelarPago.addEventListener('click', () => {
-        modalPago.style.display = 'none';
-        document.body.style.overflow = 'auto';
+    btnCancelarMesa.addEventListener('click', () => cerrarModal(modalMesa));
+
+    btnMesaSiguiente.addEventListener('click', () => {
+        if (!mesaSeleccionada) {
+            mostrarNotificacion('⚠️ Debes seleccionar una mesa', 'error');
+            return;
+        }
+        cerrarModal(modalMesa);
+        abrirModal(modalPago);
     });
 
-    window.addEventListener('click', (e) => {
-        if (e.target === modalCarrito || e.target === modalPago) {
-            e.target.style.display = 'none';
-            document.body.style.overflow = 'auto';
+    btnCancelarPago.addEventListener('click', () => cerrarModal(modalPago));
+
+    // --- SELECCIONAR MESA ---
+    document.addEventListener('click', (e) => {
+        const mesaItem = e.target.closest('.mesa-item');
+        if (mesaItem && mesaItem.dataset.estado === 'disponible') {
+            // Deseleccionar todas las mesas
+            document.querySelectorAll('.mesa-item').forEach(m => {
+                m.classList.remove('seleccionada');
+            });
+            
+            // Seleccionar la mesa clickeada
+            mesaItem.classList.add('seleccionada');
+            mesaSeleccionada = mesaItem.dataset.id;
+            
+            // Habilitar botón siguiente
+            btnMesaSiguiente.disabled = false;
+            
+            mostrarNotificacion(`✅ Mesa ${mesaItem.querySelector('p').textContent} seleccionada`, 'exito');
         }
     });
+
+    // --- FUNCIONES MODALES ---
+    function abrirModal(modal) {
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function cerrarModal(modal) {
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
 
     // --- ENVIAR PEDIDO ---
     formPedido.addEventListener('submit', async (e) => {
         e.preventDefault();
+
         if (carrito.length === 0) {
             mostrarNotificacion('❌ El carrito está vacío', 'error');
+            return;
+        }
+        if (!mesaSeleccionada) {
+            mostrarNotificacion('❌ Debes seleccionar una mesa', 'error');
             return;
         }
 
@@ -203,38 +221,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
-                body: JSON.stringify({ metodo_pago, total, productos: carrito })
+                body: JSON.stringify({
+                    metodo_pago,
+                    total,
+                    mesa_id: mesaSeleccionada,
+                    productos: carrito
+                })
             });
 
             const data = await response.json();
             if (data.success) {
                 mostrarNotificacion('✅ Pedido realizado con éxito', 'exito');
-                modalPago.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                cerrarModal(modalPago);
                 carrito.length = 0;
                 actualizarCarrito();
+                mesaSeleccionada = null;
+                
+                // Resetear selección de mesa
+                document.querySelectorAll('.mesa-item').forEach(m => {
+                    m.classList.remove('seleccionada');
+                });
+                btnMesaSiguiente.disabled = true;
             } else {
-                mostrarNotificacion('❌ Error al procesar el pedido', 'error');
+                mostrarNotificacion(`❌ ${data.message}`, 'error');
             }
         } catch (error) {
             console.error(error);
-            mostrarNotificacion('❌ Error de conexión', 'error');
+            mostrarNotificacion('❌ Error al enviar el pedido', 'error');
         }
     });
 
     // --- NOTIFICACIONES ---
     function mostrarNotificacion(mensaje, tipo) {
-        let notificacion = document.querySelector('.notificacion-pedido');
-        if (!notificacion) {
-            notificacion = document.createElement('div');
-            notificacion.className = 'notificacion-pedido';
-            document.body.appendChild(notificacion);
+        const notificacion = document.getElementById('notificacionPedido');
+        if (notificacion) {
+            notificacion.textContent = mensaje;
+            notificacion.className = `notificacion-pedido ${tipo}`;
+            notificacion.style.display = 'block';
+            
+            setTimeout(() => {
+                notificacion.style.display = 'none';
+            }, 3000);
         }
-        notificacion.textContent = mensaje;
-        notificacion.className = `notificacion-pedido ${tipo}`;
-        notificacion.style.display = 'block';
-
-        setTimeout(() => { notificacion.style.display = 'none'; }, 3000);
     }
 
     // --- INICIALIZAR ---

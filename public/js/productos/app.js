@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputImagen = document.getElementById('imagen');
     const labelImagen = document.querySelector('label.custom-file-label[for="imagen"]');
 
+    // Variables para el modal de confirmación
+    const modalConfirmacion = document.getElementById('modalConfirmacion');
+    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+    const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
+    const confirmacionMensaje = document.getElementById('confirmacionMensaje');
+    let formEliminarActual = null;
 
     inputImagen.addEventListener('change', function() {
         if (this.files && this.files.length > 0) {
@@ -59,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (editPreview) {
                 editPreview.src = imagenUrl || '/img/defecto.png';
             }
-
 
             // limpiar input file del modal
             if (editImagenInput) editImagenInput.value = '';
@@ -113,34 +118,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Eliminar producto (delegación)
+    // Eliminar producto con confirmación personalizada
     productosBody.addEventListener('click', async e => {
-        if (e.target.closest('.btn-eliminar')) {
+        const btnEliminar = e.target.closest('.btn-eliminar');
+        if (btnEliminar) {
             e.preventDefault();
-            const form = e.target.closest('form');
+            formEliminarActual = btnEliminar.closest('form');
+            const nombreProducto = btnEliminar.closest('tr').querySelector('.td-nombre').innerText;
+            
+            // Personalizar el mensaje
+            confirmacionMensaje.innerHTML = `
+                ¿Estás seguro de que deseas eliminar el producto <strong>"${nombreProducto}"</strong>? 
+                <br><br>
+                <small>Esta acción es reversible. Podrás recuperarlo desde la sección de productos eliminados.</small>
+            `;
+            
+            // Mostrar modal de confirmación
+            modalConfirmacion.classList.add('show');
+        }
+    });
 
-            if (confirm('¿Estás seguro de eliminar este producto?')) {
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'X-HTTP-Method-Override': 'DELETE'
-                        }
-                    });
-
-                    if (response.ok) {
-                        mostrarNotificacion('Producto eliminado', 'error');
-                        location.reload();
-                    } else {
-                        mostrarNotificacion('Error al eliminar', 'error');
+    // Confirmar eliminación
+    btnConfirmarEliminar.addEventListener('click', async () => {
+        if (formEliminarActual) {
+            try {
+                const response = await fetch(formEliminarActual.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-HTTP-Method-Override': 'DELETE'
                     }
-                } catch (err) {
-                    console.error(err);
-                    mostrarNotificacion('Error de conexión', 'error');
+                });
+
+                if (response.ok) {
+                    mostrarNotificacion('Producto eliminado correctamente', 'exito');
+                    modalConfirmacion.classList.remove('show');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    mostrarNotificacion('Error al eliminar el producto', 'error');
+                    modalConfirmacion.classList.remove('show');
                 }
+            } catch (err) {
+                console.error(err);
+                mostrarNotificacion('Error de conexión', 'error');
+                modalConfirmacion.classList.remove('show');
             }
+        }
+    });
+
+    // Cancelar eliminación
+    btnCancelarEliminar.addEventListener('click', () => {
+        modalConfirmacion.classList.remove('show');
+        formEliminarActual = null;
+    });
+
+    // Cerrar modal al hacer clic fuera
+    modalConfirmacion.addEventListener('click', (e) => {
+        if (e.target === modalConfirmacion) {
+            modalConfirmacion.classList.remove('show');
+            formEliminarActual = null;
         }
     });
 });

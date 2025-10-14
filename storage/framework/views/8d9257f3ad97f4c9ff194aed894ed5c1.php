@@ -5,6 +5,9 @@
     <header>
         <h1><i class="fas fa-coffee"></i> Gestión de Productos Coffeeology</h1>
     </header>
+    <a href="<?php echo e(route('productos.eliminados')); ?>" class="btn btn-eliminados" style="margin-left: 15px;">
+        <i class="fas fa-trash"></i> Ver productos eliminados
+    </a>
 
     <!-- Estadísticas -->
     <div class="estadisticas">
@@ -23,8 +26,8 @@
                 <?php echo e($productos->filter(fn($p) => $p->categoria->nombre === 'Bebidas')->count()); ?>
 
             </div>
-        <div class="etiqueta">Productos Bebidas</div>
-    </div>
+            <div class="etiqueta">Productos Bebidas</div>
+        </div>
     </div>
 
     <!-- Formulario de productos -->
@@ -51,8 +54,6 @@
             <label for="imagen"><i class="fas fa-image"></i> Imagen:</label>
             <input type="file" id="imagen" name="imagen" accept="image/*">
             <label class="custom-file-label" for="imagen">Seleccionar imagen</label>
-
-
 
             <button type="submit" class="btn btn-agregar">
                 <i class="fas fa-plus"></i> Agregar Producto
@@ -88,18 +89,24 @@
                         <td class="td-stock"><?php echo e($producto->stock); ?></td>
                         <td class="td-categoria"><?php echo e($producto->categoria->nombre); ?></td>
                         <td>
-                            <button
-                                class="btn-editar"
-                                data-id="<?php echo e($producto->id); ?>"
-                                data-imagen="<?php echo e($producto->imagen ? asset('storage/'.$producto->imagen) : ''); ?>"
-                                data-categoria="<?php echo e($producto->categoria_id); ?>"
-                            >Editar</button>
+                            <div class="acciones">
+                                <button
+                                    class="btn-editar"
+                                    data-id="<?php echo e($producto->id); ?>"
+                                    data-imagen="<?php echo e($producto->imagen ? asset('storage/'.$producto->imagen) : ''); ?>"
+                                    data-categoria="<?php echo e($producto->categoria_id); ?>"
+                                >
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
 
-                            <form action="<?php echo e(route('productos.destroy', $producto->id)); ?>" method="POST" style="display:inline;">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('DELETE'); ?>
-                                <button class="btn-eliminar">Eliminar</button>
-                            </form>
+                                <form action="<?php echo e(route('productos.destroy', $producto->id)); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                    <button type="button" class="btn-eliminar">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -136,9 +143,8 @@
             </select>
 
             <label for="editImagen"><i class="fas fa-image"></i> Cambiar imagen (opcional):</label>
-            <label class="custom-file-label" for="editImagen">Seleccionar nueva imagen</label>
             <input type="file" id="editImagen" name="imagen" accept="image/*">
-
+            <label class="custom-file-label" for="editImagen">Seleccionar nueva imagen</label>
 
             <div class="imagen-preview" style="margin-top:10px;">
                 <img id="editPreview" src="<?php echo e(asset('img/defecto.png')); ?>" alt="Preview" style="width:120px; height:80px; object-fit:cover; border-radius:6px;">
@@ -151,8 +157,33 @@
     </div>
 </div>
 
+<!-- Modal de confirmación para eliminar -->
+<div id="modalConfirmacion" class="modal-confirmacion">
+    <div class="modal-confirmacion-content">
+        <div class="modal-confirmacion-icono">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-confirmacion-titulo">¿Estás seguro?</h3>
+        <p class="modal-confirmacion-mensaje" id="confirmacionMensaje">
+            Esta acción eliminará el producto de manera lógica. 
+            Podrás recuperarlo desde la sección de productos eliminados.
+        </p>
+        <div class="modal-confirmacion-botones">
+            <button id="btnConfirmarEliminar" class="btn-confirmar">
+                <i class="fas fa-trash"></i> Sí, eliminar
+            </button>
+            <button id="btnCancelarEliminar" class="btn-cancelar">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Notificación -->
 <div id="notificacion" class="notificacion"></div>
-<?php $__env->stopSection(); ?>
 
+<!-- CSRF Token para JavaScript -->
+<meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.productos.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/productos/index.blade.php ENDPATH**/ ?>

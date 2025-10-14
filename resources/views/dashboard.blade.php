@@ -16,6 +16,9 @@
         <div class="card" onclick="location.href='{{ route('pedido.index') }}'">
             <i class="fas fa-shopping-bag"></i> Pedidos
         </div>
+        <div class="card" onclick="location.href='{{ route('mesas.index') }}'">
+            <i class="fas fa-chair"></i> Mesas
+        </div>
         <div class="card">
             <i class="fas fa-users"></i> Usuarios
         </div>
