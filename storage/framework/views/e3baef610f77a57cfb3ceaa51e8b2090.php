@@ -7,15 +7,33 @@
 <script src="<?php echo e(asset('js/mesas/mesa.js')); ?>" defer></script>
 
 <div class="container-mesas">
-    <h1><i class= "fas fa-chair"></i> Gestión de Mesas</h1>
+    <h1><i class="fas fa-chair"></i> Gestión de Mesas</h1>
 
-    <img src="<?php echo e(asset('img/mesas/ubicacion.png')); ?>" alt="Ubicación de Mesas" class="mesas-img">
+    <!-- 🔹 Contenedor visual de mesas -->
+    <div id="area-mesas" class="area-mesas">
+        <?php $__currentLoopData = $mesas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mesa): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div class="mesa-item <?php echo e($mesa->estado); ?>" 
+                data-id="<?php echo e($mesa->id); ?>" 
+                style="left: <?php echo e($mesa->pos_x ?? 50); ?>px; top: <?php echo e($mesa->pos_y ?? 50); ?>px;">
+                <div class="numero-mesa">Mesa <?php echo e($mesa->numero_mesa); ?></div>
+                <div class="icono-mesa"><i class="fas fa-chair"></i></div>
+            </div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
+
+
+    <div class="acciones-mesas">
+        <button id="guardar-posiciones" class="btn btn-guardar">
+            <i class="fas fa-save"></i> Guardar posiciones
+        </button>
+    </div>
 
     <div class="stats">
         <span class="disponibles">Disponibles: <?php echo e($disponibles); ?></span>
         <span class="ocupadas">Ocupadas: <?php echo e($ocupadas); ?></span>
     </div>
 
+    <!-- 🔹 FORMULARIO CREAR -->
     <form id="formMesa" method="POST" action="<?php echo e(route('mesas.store')); ?>">
         <?php echo csrf_field(); ?>
         <div>
@@ -23,11 +41,13 @@
             <input type="text" id="numero_mesa" name="numero_mesa" required>
             <span id="errorNumero" class="input-error"></span>
         </div>
+
         <div>
             <label for="capacidad">Capacidad:</label>
             <input type="number" id="capacidad" name="capacidad" required min="2" max="6">
             <span id="errorCapacidad" class="input-error"></span>
         </div>
+
         <div>
             <label for="estado">Estado:</label>
             <select name="estado" required>
@@ -35,9 +55,11 @@
                 <option value="ocupada">Ocupada</option>
             </select>
         </div>
+
         <button type="submit" class="btn btn-agregar">Agregar Mesa</button>
     </form>
 
+    <!-- 🔹 TABLA DE MESAS -->
     <table class="table">
         <thead>
             <tr>
@@ -69,7 +91,7 @@
     </table>
 </div>
 
-<!-- Modal para editar -->
+<!-- 🔹 MODAL EDITAR -->
 <div id="modalEditar" class="modal">
     <div class="modal-content">
         <h3>Editar Mesa</h3>
@@ -79,11 +101,13 @@
                 <label for="edit_numero_mesa">Número de Mesa:</label>
                 <input type="text" id="edit_numero_mesa" name="numero_mesa" readonly>
             </div>
+
             <div>
                 <label for="edit_capacidad">Capacidad:</label>
                 <input type="number" id="edit_capacidad" name="capacidad" required min="2" max="6">
                 <span id="errorEditarCapacidad" class="input-error"></span>
             </div>
+
             <div>
                 <label for="edit_estado">Estado:</label>
                 <select id="edit_estado" name="estado" required>
@@ -91,6 +115,7 @@
                     <option value="ocupada">Ocupada</option>
                 </select>
             </div>
+
             <button type="submit" class="btn btn-agregar">Guardar Cambios</button>
             <button type="button" id="cerrarModal" class="btn btn-eliminar">Cancelar</button>
         </form>

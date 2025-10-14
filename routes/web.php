@@ -75,4 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/mesas/{mesa}', [MesaController::class, 'update'])->name('mesas.update');
     Route::delete('/mesas/{mesa}', [MesaController::class, 'destroy'])->name('mesas.destroy');
     Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
+    Route::post('/mesas/guardar-posiciones', [MesaController::class, 'guardarPosiciones'])->name('mesas.guardarPosiciones');
+    Route::post('/mesas/{id}/actualizar-posicion', [MesaController::class, 'actualizarPosicion']);
+
 });
