@@ -53,8 +53,40 @@
         <button type="submit" class="btn">Ingresar</button>
         <p class="switch">¿No tienes cuenta? <a href="{{ route('signup.form') }}">Regístrate</a></p>
     </form>
+    <a href="{{ route('dashboard') }}" class="back-dashboard">
+          Volver al inicio
+      </a>
+
+      <style>
+      .back-dashboard {
+          display: block;           /* Para centrar con margin auto */
+          text-align: center;       /* Centrar texto */
+          margin: 20px auto 0 auto; /* Separación arriba y centrado horizontal */
+          color: #333;
+          text-decoration: none;
+          font-weight: bold;
+          font-size: 0.85rem;       /* Letra más pequeña */
+          transition: all 0.3s ease;
+      }
+
+      .back-dashboard:hover {
+          color: #f5c518;           /* Color dorado */
+          transform: translateY(-2px); /* Pequeña animación al hover */
+      }
+      </style>
+
     </div>
   </div>
+  @if(session('success'))
+  <script>
+      Swal.fire({
+          icon: 'success',
+          title: '¡Listo!',
+          text: '{{ session('success') }}',
+          confirmButtonText: 'Aceptar'
+      });
+  </script>
+  @endif
 
   <script>
     const loginForm = document.getElementById('loginForm');

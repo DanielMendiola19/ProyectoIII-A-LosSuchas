@@ -43,6 +43,28 @@ unset($__errorArgs, $__bag); ?>
         </div>
         <button type="submit" class="btn">Enviar código</button>
       </form>
+
+      <a href="<?php echo e(route('login.form')); ?>" class="back-dashboard">
+          ← Volver al inicio de sesión
+      </a>
+
+      <style>
+      .back-dashboard {
+          display: inline-block;
+          margin-top: 15px;
+          color: #4B2E2E;
+          text-decoration: none;
+          font-weight: bold;
+          transition: all 0.3s ease;
+      }
+
+      .back-dashboard:hover {
+          color: #f5c518; /* color dorado */
+          transform: translateX(-3px);
+      }
+      </style>
+
+
     </div>
   </div>
 </body>

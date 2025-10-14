@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\PasswordToken;
 use App\Models\Usuario;
 use Carbon\Carbon;
+use App\Jobs\ExpireTokenJob;
+use App\Mail\SendTokenMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class PasswordTokenController extends Controller
 {
@@ -43,14 +47,16 @@ class PasswordTokenController extends Controller
 
         // Generar token de 6 dígitos
         $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $expiresAt = Carbon::now()->addMinutes(5);
+        $expiresAt = Carbon::now()->addMinutes(3);
 
-        PasswordToken::create([
+        $tokenModel = PasswordToken::create([
             'correo' => $correo,
             'token' => $token,
             'estado' => 'activo',
             'expires_at' => $expiresAt,
         ]);
+        Mail::to($correo)->send(new SendTokenMail($correo, $token));
+        ExpireTokenJob::dispatch($tokenModel)->delay(now()->addMinutes(3));
 
         // Guardar correo y expiración de sesión
         session([
@@ -59,7 +65,7 @@ class PasswordTokenController extends Controller
         ]);
 
         return redirect()->route('password.verify.code.form')
-                         ->with('success', 'Se generó un código de verificación. (Temporal)');
+                        ->with('success', 'Se generó un código de verificación. (Temporal)');
     }
 
     /**
@@ -67,7 +73,13 @@ class PasswordTokenController extends Controller
      */
     public function showVerifyCode()
     {
-        if (!session()->has('correo_recuperacion') || Carbon::now()->greaterThan(session('correo_expira'))) {
+        // Si no existe sesión → acceso denegado (sin mensaje)
+        if (!session()->has('correo_recuperacion')) {
+            return redirect()->route('password.request');
+        }
+
+        // Si expiró → limpiar y mostrar mensaje
+        if (Carbon::now()->greaterThan(session('correo_expira'))) {
             session()->forget(['correo_recuperacion', 'correo_expira']);
             return redirect()->route('password.request')
                             ->with('error', 'El tiempo de espera acabó. Ingresa nuevamente tu correo.');
@@ -86,6 +98,7 @@ class PasswordTokenController extends Controller
 
         return view('auth.verify-code');
     }
+
 
 
     /**
@@ -129,7 +142,7 @@ class PasswordTokenController extends Controller
             $token->markAsExpired();
             session()->forget(['correo_recuperacion', 'correo_expira']);
             return redirect()->route('password.request')
-                             ->with('error', 'El token expiró. Ingresa nuevamente tu correo.');
+                            ->with('error', 'El token expiró. Ingresa nuevamente tu correo.');
         }
 
         // Verificar coincidencia
@@ -142,38 +155,131 @@ class PasswordTokenController extends Controller
 
         // Redirigir a restablecer contraseña
         return redirect()->route('password.reset.form')
-                         ->with('success', 'Código verificado correctamente. Ahora puedes cambiar tu contraseña.');
+                        ->with('success', 'Código verificado correctamente. Ahora puedes cambiar tu contraseña.');
     }
 
+    /**
+     * Reenviar token
+     */
     public function resendToken(Request $request)
-{
-    $correo = session('correo_recuperacion');
+    {
+        $correo = session('correo_recuperacion');
 
-    if (!$correo) {
-        return response()->json(['error' => 'No hay sesión de correo activa.'], 422);
+        if (!$correo) {
+            return response()->json(['error' => 'No hay sesión de correo activa.'], 422);
+        }
+
+        // Expirar tokens anteriores
+        PasswordToken::where('correo', $correo)
+            ->where('estado', 'activo')
+            ->update(['estado' => 'expirado']);
+
+        // Generar nuevo token
+        $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expiresAt = Carbon::now()->addMinutes(3);
+
+        $nuevoToken = PasswordToken::create([
+            'correo' => $correo,
+            'token' => $token,
+            'estado' => 'activo',
+            'expires_at' => $expiresAt,
+        ]);
+        Mail::to($correo)->send(new SendTokenMail($correo, $token));
+        ExpireTokenJob::dispatch($nuevoToken)->delay(now()->addMinutes(3));
+
+        return response()->json([
+            'success' => true,
+            'token' => $nuevoToken->token,
+            'expires_at' => $nuevoToken->expires_at->toDateTimeString(),
+        ]);
     }
 
-    // Expirar tokens anteriores
-    PasswordToken::where('correo', $correo)
-        ->where('estado', 'activo')
-        ->update(['estado' => 'expirado']);
 
-    // Generar nuevo token
-    $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $expiresAt = Carbon::now()->addMinutes(5);
+    public function clearSession(Request $request)
+    {
+        session()->forget(['correo_recuperacion', 'correo_expira']);
 
-    $nuevoToken = PasswordToken::create([
-        'correo' => $correo,
-        'token' => $token,
-        'estado' => 'activo',
-        'expires_at' => $expiresAt,
-    ]);
+        return redirect()->route('password.request')
+                        ->with('info', 'Has cerrado la sesión de recuperación. Puedes ingresar otro correo.');
+    }
 
-    return response()->json([
-        'success' => true,
-        'token' => $nuevoToken->token,
-        'expires_at' => $nuevoToken->expires_at->toDateTimeString(),
-    ]);
-}
+    public function showResetPassword()
+    {
+        // Si no hay sesión → acceso denegado directo sin mensaje
+        if (!session()->has('correo_recuperacion')) {
+            return redirect()->route('password.request');
+        }
+
+        // Si expiró → limpiar y mostrar mensaje
+        if (Carbon::now()->greaterThan(session('correo_expira'))) {
+            session()->forget(['correo_recuperacion', 'correo_expira']);
+            return redirect()->route('password.request')
+                            ->with('error', 'El tiempo de sesión expiró. Ingresa nuevamente tu correo.');
+        }
+
+        $correo = session('correo_recuperacion');
+
+        $ultimoToken = PasswordToken::where('correo', $correo)
+                        ->orderByDesc('created_at')
+                        ->first();
+
+        if (!$ultimoToken || $ultimoToken->estado !== 'usado') {
+            return redirect()->route('password.verify.code.form')
+                            ->with('error', 'Primero debes verificar tu código de seguridad.');
+        }
+
+        return view('auth.reset-password');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $rules = [
+            'password' => [
+                'required',
+                'string',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{}|;:\'",.<>\/?]).{8,}$/',
+                'confirmed',
+            ],
+        ];
+
+        $messages = [
+            'password.required' => 'Ingresa una nueva contraseña.',
+            'password.regex' => 'La contraseña debe incluir mayúsculas, minúsculas, números y símbolos.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ];
+
+        $validated = $request->validate($rules, $messages);
+
+        $correo = session('correo_recuperacion');
+
+        if (!$correo) {
+            return redirect()->route('password.request')
+                            ->with('error', 'No hay una sesión activa de recuperación.');
+        }
+
+        $usuario = Usuario::where('correo', $correo)->first();
+
+        if (!$usuario) {
+            return redirect()->route('password.request')
+                            ->with('error', 'No se encontró el usuario asociado a este correo.');
+        }
+
+        try {
+            // Actualizar contraseña
+            $usuario->update([
+                'contrasena' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+            ]);
+
+            // Limpiar sesión de recuperación
+            session()->forget(['correo_recuperacion', 'correo_expira']);
+
+            return redirect()->route('login.form')->with('success', 'Tu contraseña fue restablecida correctamente. Inicia sesión.');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al restablecer contraseña: '.$e->getMessage());
+            return back()->with('error', 'Ocurrió un error al actualizar la contraseña. Inténtalo nuevamente.');
+        }
+    }
+
 
 }

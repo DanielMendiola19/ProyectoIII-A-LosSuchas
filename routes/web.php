@@ -56,16 +56,19 @@ Route::post('/forgot-password', [PasswordTokenController::class, 'sendToken'])->
 Route::get('/verify-code', [PasswordTokenController::class, 'showVerifyCode'])->name('password.verify.code.form');
 Route::post('/verify-code', [PasswordTokenController::class, 'checkCode'])->name('password.check.code');
 
-Route::get('/reset-password', function() {
-    return view('auth.reset-password');
-})->name('password.reset.form');
-
-// web.php
-Route::post('/reset-password', [PasswordTokenController::class, 'resetPassword'])
-    ->name('password.reset');
+Route::get('/reset-password', [PasswordTokenController::class, 'showResetPassword'])->name('password.reset.form');
+Route::post('/reset-password', [PasswordTokenController::class, 'resetPassword'])->name('password.reset');
 
 
+//Generar token
 Route::get('/generar-token', [PasswordTokenController::class, 'generateToken'])->name('token.generate');
 
+//Reenviar token
 Route::post('/resend-token', [PasswordTokenController::class, 'resendToken'])
-     ->name('password.resend');
+    ->name('password.resend');
+
+// Clear session data
+Route::post('/forgot-password/clear', [PasswordTokenController::class, 'clearSession'])
+    ->name('password.clear.session');
+
+

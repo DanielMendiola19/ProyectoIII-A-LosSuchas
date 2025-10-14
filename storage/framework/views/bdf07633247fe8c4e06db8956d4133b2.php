@@ -5,24 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verificar código | Coffeeology</title>
 <link rel="stylesheet" href="<?php echo e(asset('css/stylesAuth.css')); ?>">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-.resend {
-  text-align: center;
-  margin-top: 15px;
-}
-.resend button, .resend a {
-  background: none;
-  border: none;
-  color: var(--dorado);
-  cursor: pointer;
-  font-weight: bold;
-}
-.resend button:disabled {
-  color: gray;
-  cursor: not-allowed;
-}
+  .resend {
+    text-align: center;
+    margin-top: 15px;
+  }
+  .resend button {
+    background: none;
+    border: none;
+    color: var(--dorado);
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  .resend button:hover:not(:disabled) {
+    color: #f1c40f;
+    transform: scale(1.05);
+  }
+  .resend button:disabled {
+    color: gray;
+    cursor: not-allowed;
+  }
+  .use-another button {
+    color: #c0392b;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .use-another button:hover {
+    color: #e74c3c;
+    transform: scale(1.05);
+  }
+  .toast-success {
+    background: #27ae60;
+    color: #fff;
+  }
+  .toast-error {
+    background: #c0392b;
+    color: #fff;
+  }
 </style>
 </head>
+
 <body class="auth-body">
   <div class="auth-container">
     <div class="auth-card">
@@ -44,7 +71,7 @@
 
       <form id="verifyForm" action="<?php echo e(route('password.check.code')); ?>" method="POST">
         <?php echo csrf_field(); ?>
-        <input type="hidden" name="correo" value="<?php echo e(session('correo') ?? old('correo')); ?>">
+        <input type="hidden" name="correo" value="<?php echo e(session('correo_recuperacion') ?? old('correo')); ?>">
         <div class="input-group">
           <label>Código de 6 dígitos</label>
           <div class="code-inputs">
@@ -53,97 +80,139 @@
             <?php endfor; ?>
           </div>
           <span class="error" id="error-codigo"></span>
+          
         </div>
         <button type="submit" class="btn">Verificar código</button>
+          <p style="text-align:center; color:#aaa; font-size:0.9rem; margin-top:10px;">
+            El código expira en <strong>3 minutos</strong>.
+          </p>
+
       </form>
 
       <div class="resend">
-        <button id="resendBtn" disabled>Reenviar código (<span id="countdown">15</span>s)</button>
+        <button id="resendBtn" disabled>
+          Reenviar código <span id="countdown">(15s)</span>
+        </button>
+      </div>
+
+      <div class="resend use-another">
+          <form action="<?php echo e(route('password.clear.session')); ?>" method="POST" style="margin-top:10px;">
+              <?php echo csrf_field(); ?>
+              <button type="submit">Usar otro correo</button>
+          </form>
       </div>
     </div>
   </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('.code-inputs input');
-    const form = document.getElementById('verifyForm');
-    const resendBtn = document.getElementById('resendBtn');
-    const countdownEl = document.getElementById('countdown');
+  const inputs = document.querySelectorAll('.code-inputs input');
+  const resendBtn = document.getElementById('resendBtn');
+  const countdownEl = document.getElementById('countdown');
+  let timer = null;
 
-    // ===== Auto avanzar y retroceder
-    inputs.forEach((input, i) => {
-        input.addEventListener('input', e => {
-            if(e.inputType !== 'deleteContentBackward' && input.value.length === 1 && i < inputs.length - 1){
-                inputs[i+1].focus();
-            }
-        });
-
-        input.addEventListener('keydown', e => {
-            // Retroceder con Backspace
-            if(e.key === 'Backspace' && !input.value && i > 0){
-                inputs[i-1].focus();
-            }
-            // Retroceder con Enter
-            if(e.key === 'Enter' && i > 0 && !input.value){
-                inputs[i-1].focus();
-                e.preventDefault();
-            }
-        });
-
-        // ===== Copiar/Pegar completo
-        input.addEventListener('paste', e => {
-            e.preventDefault();
-            let paste = e.clipboardData.getData('text').slice(0,6);
-            for(let j=0;j<6;j++){
-                if(inputs[j]) inputs[j].value = paste[j] || '';
-            }
-            if(inputs[5].value) inputs[5].focus();
-        });
+  // ===== Auto avanzar y retroceder =====
+  inputs.forEach((input, i) => {
+    input.addEventListener('input', e => {
+      const value = e.target.value;
+      if (!/^\d$/.test(value)) {
+        e.target.value = '';
+        return;
+      }
+      if (value && i < inputs.length - 1) inputs[i + 1].focus();
     });
 
-    // ===== Countdown para reenviar
-    let countdown = 15;
-    function startCountdown() {
-        resendBtn.disabled = true;
-        countdown = 15;
-        countdownEl.textContent = countdown;
-        const timer = setInterval(() => {
-            countdown--;
-            countdownEl.textContent = countdown;
-            if (countdown <= 0) {
-                clearInterval(timer);
-                resendBtn.disabled = false;
-            }
-        }, 1000);
-    }
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !input.value && i > 0) inputs[i - 1].focus();
+    });
 
+    input.addEventListener('paste', e => {
+      e.preventDefault();
+      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+      for (let j = 0; j < paste.length; j++) {
+        if (inputs[j]) inputs[j].value = paste[j];
+      }
+      if (paste.length < 6) {
+        inputs[paste.length]?.focus();
+      } else {
+        inputs[5].focus();
+      }
+    });
+  });
+
+  // ===== Countdown =====
+  function startCountdown() {
+    let countdown = 15;
+    resendBtn.disabled = true;
+    countdownEl.style.display = "inline"; // mostrar contador
+    countdownEl.textContent = `(${countdown}s)`; // inicializar con paréntesis
+
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        countdownEl.textContent = `(${countdown}s)`;
+      } else {
+        clearInterval(timer);
+        resendBtn.disabled = false;
+        countdownEl.style.display = "none"; // ocultar contador
+      }
+    }, 1000);
+  }
+
+
+
+  startCountdown();
+
+  // ===== SweetAlert Toasts =====
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+  });
+
+  // ===== Reenviar código =====
+  resendBtn.addEventListener('click', async () => {
     startCountdown();
 
-    resendBtn.addEventListener('click', async () => {
-        startCountdown();
+    const token = document.querySelector('input[name="_token"]').value;
 
-        const correo = document.querySelector('input[name="correo"]').value;
-        const token = document.querySelector('input[name="_token"]').value;
+    try {
+      const res = await fetch("<?php echo e(route('password.resend')); ?>", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token
+        },
+      });
 
-        try {
-            const res = await fetch("<?php echo e(route('password.send')); ?>", {
-                method: 'POST',
-                headers: {'Accept':'application/json','X-CSRF-TOKEN': token},
-                body: new URLSearchParams({correo})
-            });
-            const data = await res.json();
-            if(data.token){
-                alert('Se generó un nuevo código (temporal)');
-            }
-        } catch(err){
-            alert('Error al generar nuevo código.');
-            console.error(err);
-        }
-    });
+      const data = await res.json();
+      if (data.success) {
+        Toast.fire({
+          icon: 'success',
+          title: 'Se ha enviado un nuevo código de verificación.'
+        });
+      } else {
+        Toast.fire({
+          icon: 'error',
+          title: 'Ocurrió un error al generar el nuevo código.'
+        });
+      }
 
+    } catch (err) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Error al contactar con el servidor.'
+      });
+      console.error(err);
+    }
+  });
 });
 
 </script>
+
 </body>
 </html>
 <?php /**PATH C:\laragon\www\ProyectoIII-A-LosSuchas\resources\views/auth/verify-code.blade.php ENDPATH**/ ?>

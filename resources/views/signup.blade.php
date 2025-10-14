@@ -116,6 +116,28 @@
         <button type="submit" class="btn">Registrarse</button>
         <p class="switch">¿Ya tienes cuenta? <a href="{{ route('login.form') }}">Inicia sesión</a></p>
       </form>
+      <a href="{{ route('dashboard') }}" class="back-dashboard">
+          Volver al inicio
+      </a>
+
+      <style>
+      .back-dashboard {
+          display: block;           /* Para centrar con margin auto */
+          text-align: center;       /* Centrar texto */
+          margin: 20px auto 0 auto; /* Separación arriba y centrado horizontal */
+          color: #333;
+          text-decoration: none;
+          font-weight: bold;
+          font-size: 0.85rem;       /* Letra más pequeña */
+          transition: all 0.3s ease;
+      }
+
+      .back-dashboard:hover {
+          color: #f5c518;           /* Color dorado */
+          transform: translateY(-2px); /* Pequeña animación al hover */
+      }
+      </style>
+
     </div>
   </div>
 
