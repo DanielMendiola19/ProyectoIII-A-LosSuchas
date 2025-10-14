@@ -1,0 +1,611 @@
+/* 🎨 Paleta de colores Coffeeology */
+:root {
+    --negro-carbon: #0D0D0D;
+    --dorado: #E6B325;
+    --blanco-hueso: #FAF9F6;
+    --gris-suave: #C0C0C0;
+    --cafe-espresso: #4B2E2E;
+    --verde-exito: #5cb85c;
+    --rojo-peligro: #d9534f;
+    --azul-info: #5bc0de;
+}
+
+/* Contenedor principal */
+.container-mesas {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.container-mesas h1 {
+    color: var(--dorado);
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(230, 179, 37, 0.5);
+    position: relative;
+}
+
+.container-mesas h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+}
+
+/* Imagen de mesas */
+.mesas-img {
+    width: 100%;
+    max-width: 800px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin: 20px auto;
+    display: block;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--dorado);
+}
+
+/* Estadísticas */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.stats span {
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.disponibles {
+    background: linear-gradient(135deg, var(--verde-exito), #4CAF50);
+    color: white;
+}
+
+.ocupadas {
+    background: linear-gradient(135deg, var(--rojo-peligro), #c9302c);
+    color: white;
+}
+
+/* Formulario */
+#formMesa {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(230, 179, 37, 0.2);
+}
+
+#formMesa div {
+    margin-bottom: 20px;
+}
+
+#formMesa label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--dorado);
+    font-size: 1rem;
+}
+
+#formMesa input,
+#formMesa select {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    border: 1px solid rgba(230, 179, 37, 0.3);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--blanco-hueso);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+#formMesa input:focus,
+#formMesa select:focus {
+    border-color: var(--dorado);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(230, 179, 37, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Estilos para combobox (select) */
+#formMesa select,
+.modal-content select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23E6B325'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    padding-right: 45px;
+    cursor: pointer;
+}
+
+/* Fondo y color de las opciones del select */
+#formMesa select option,
+.modal-content select option {
+    background-color: var(--cafe-espresso);
+    color: var(--blanco-hueso);
+    padding: 10px;
+    border: none;
+}
+
+/* Estilo cuando el select está enfocado */
+#formMesa select:focus,
+.modal-content select:focus {
+    border-color: var(--dorado);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(230, 179, 37, 0.3);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Eliminar la flecha por defecto en IE */
+#formMesa select::-ms-expand,
+.modal-content select::-ms-expand {
+    display: none;
+}
+
+/* Mensajes de error */
+.input-error {
+    color: var(--rojo-peligro);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+    font-weight: bold;
+}
+
+/* Botones */
+.btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.btn-agregar {
+    background: linear-gradient(135deg, var(--dorado), #c9981f);
+    color: var(--negro-carbon);
+}
+
+.btn-agregar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230, 179, 37, 0.4);
+}
+
+.btn-editar {
+    background: linear-gradient(135deg, #C9A467, #B89352);
+    color: var(--negro-carbon);
+    border: 2px solid #C9A467;
+}
+
+.btn-editar:hover {
+    background: linear-gradient(135deg, #B89352, #A5823D);
+    transform: scale(1.05);
+}
+
+.btn-eliminar {
+    background: linear-gradient(135deg, #A85C50, #9C4A3D);
+    color: var(--blanco-hueso);
+    border: 2px solid #A85C50;
+}
+
+.btn-eliminar:hover {
+    background: linear-gradient(135deg, #9C4A3D, #8B3A35);
+    transform: scale(1.05);
+}
+
+/* Tabla */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+}
+
+.table th {
+    background: linear-gradient(135deg, var(--negro-carbon), var(--cafe-espresso));
+    color: var(--dorado);
+    padding: 15px;
+    text-align: center;
+    font-size: 1rem;
+    position: relative;
+}
+
+.table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: var(--dorado);
+}
+
+.table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--blanco-hueso);
+}
+
+.table tr {
+    transition: background 0.3s;
+}
+
+.table tr:hover {
+    background: rgba(230, 179, 37, 0.1);
+}
+
+.table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.table tr:nth-child(even):hover {
+    background: rgba(230, 179, 37, 0.15);
+}
+
+/* Estados de mesas */
+.estado-disponible {
+    color: var(--verde-exito) !important;
+    font-weight: bold;
+}
+
+.estado-ocupada {
+    color: var(--rojo-peligro) !important;
+    font-weight: bold;
+}
+
+/* Contenedor de acciones en tabla */
+.table td:last-child {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table td:last-child form {
+    margin: 0;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, var(--negro-carbon), var(--cafe-espresso));
+    width: 450px;
+    max-width: 90%;
+    padding: 30px;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--dorado);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-content h3 {
+    color: var(--dorado);
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.modal-content form div {
+    margin-bottom: 15px;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--dorado);
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(230, 179, 37, 0.3);
+    background-color: rgba(0,0,0,0.3);
+    color: var(--blanco-hueso);
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+    border-color: var(--dorado);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(230, 179, 37, 0.3);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content .btn {
+    margin: 5px;
+}
+
+/* Notificaciones */
+.notificacion {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 20px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    display: none;
+    animation: slideInRight 0.3s, slideOutRight 0.3s 2.7s;
+    max-width: 350px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notificacion.exito {
+    background: linear-gradient(135deg, var(--verde-exito), #45a049);
+    color: white;
+}
+
+.notificacion.error {
+    background: linear-gradient(135deg, var(--rojo-peligro), #c9302c);
+    color: white;
+}
+
+.notificacion.info {
+    background: linear-gradient(135deg, var(--azul-info), #46b8da);
+    color: white;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container-mesas {
+        padding: 15px;
+    }
+    
+    .container-mesas h1 {
+        font-size: 2rem;
+    }
+    
+    .stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .stats span {
+        width: 100%;
+        max-width: 250px;
+        text-align: center;
+    }
+    
+    .mesas-img {
+        height: 200px;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 10px 8px;
+    }
+    
+    .table td:last-child {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-mesas h1 {
+        font-size: 1.7rem;
+    }
+    
+    #formMesa {
+        padding: 15px;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 8px 6px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* 🔹 Contenedor de área de mesas */
+.area-mesas {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border: 2px dashed var(--dorado, #e6b325);
+    background: rgba(255, 255, 255, 0.03); /* Fondo semitransparente con efecto glass */
+    backdrop-filter: blur(5px);
+    margin: 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(230, 179, 37, 0.15);
+}
+
+/* 🔹 Cada mesa */
+.mesa-item {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, var(--cafe-espresso, #3b2222), #2b1a1a);
+    border-radius: 12px;
+    text-align: center;
+    color: var(--blanco-hueso, #fff);
+    cursor: grab;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+}
+
+.mesa-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* 🔹 Texto arriba */
+.numero-mesa {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--dorado, #ffd700);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 🔹 Icono de la mesa abajo */
+.icono-mesa {
+    font-size: 28px;
+    color: var(--blanco-hueso, #fff);
+}
+
+/* 🔹 Colores según estado */
+.mesa-item.disponible {
+    background: linear-gradient(135deg, var(--verde-exito, #2e8b57), #3cb371);
+}
+
+.mesa-item.ocupada {
+    background: linear-gradient(135deg, var(--rojo-peligro, #b22222), #8b0000);
+}
+
+/* 🔹 Botón guardar posiciones */
+.btn-guardar {
+    background: linear-gradient(135deg, var(--dorado, #ffd700), #e6b325);
+    color: #1b1b1b;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 10px rgba(230, 179, 37, 0.3);
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.btn-guardar:hover {
+    background: linear-gradient(135deg, #f5d76e, var(--dorado, #ffd700));
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(230, 179, 37, 0.5);
+}
+
+/* 🔹 Responsividad para pantallas pequeñas */
+@media (max-width: 600px) {
+    .area-mesas {
+        height: 350px;
+    }
+
+    .mesa-item {
+        width: 60px;
+        height: 60px;
+        padding: 5px;
+    }
+
+    .numero-mesa {
+        font-size: 12px;
+    }
+
+    .icono-mesa {
+        font-size: 20px;
+    }
+}
+
+
+
+

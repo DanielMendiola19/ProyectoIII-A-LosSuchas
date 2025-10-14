@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
 
     <!-- CSS propio -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/productos/app.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/menu/menu.css')); ?>">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -303,7 +303,7 @@
                 <a href="<?php echo e(route('productos.index')); ?>"><i class="fas fa-coffee me-2"></i> Productos</a>
                 <a href="<?php echo e(route('menu.index')); ?>"><i class="fas fa-store me-2"></i> Menu</a>
                 <a href="<?php echo e(route('pedido.index')); ?>"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
-                <a href="<?php echo e(route('mesas.index')); ?>"><i class="fas fas fa-chair me-2"></i> Mesas</a>
+                <a href="<?php echo e(route('mesas.index')); ?>"><i class="fas fa-chair me-2"></i> Mesas</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
@@ -371,9 +371,6 @@
         <?php echo $__env->yieldContent('content'); ?>
     </div>
 
-    <!-- JS propio -->
-    <script src="<?php echo e(asset('js/productos/app.js')); ?>"></script>
-
     <script>
         // Funcionalidad del menú móvil
         document.addEventListener('DOMContentLoaded', function() {
@@ -423,4 +420,4 @@
 
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
-</html><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/layouts/productos/app.blade.php ENDPATH**/ ?>
+</html><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/layouts/menu/app.blade.php ENDPATH**/ ?>
