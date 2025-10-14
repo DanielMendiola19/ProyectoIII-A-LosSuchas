@@ -49,17 +49,23 @@ Route::middleware(['auth', 'role:Administrador'])->group(function () {
     Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 });
 
+
 Route::get('/informacion', function () {
     return view('informacion.index');
 })->name('informacion.index');
 
 
 // CRUD de productos protegido
-Route::get('/productos', [ProductoController::class, 'index'])
-    ->middleware('auth')
-    ->name('productos.index');
-
-
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/productos', [ProductoController::class, 'index'])
+        ->middleware('auth')
+        ->name('productos.index');
+    Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
+        ->middleware('auth')
+        ->name('productos.destroy');
+    Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
+    Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
+});
 
 // =========================
 // Recuperación de contraseña
@@ -86,15 +92,13 @@ Route::post('/forgot-password/clear', [PasswordTokenController::class, 'clearSes
     ->name('password.clear.session');
 
 
-Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('productos.destroy');
-Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
-Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
 
-Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+});
+
+Route::middleware(['auth', 'role:Aministrador'])->group(function () {
     Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
     Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
 });

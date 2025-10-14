@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Acceso denegado'); ?>
 <?php $__env->startSection('code', '403'); ?>
 <?php $__env->startSection('message', 'No tienes permiso para acceder a esta página.'); ?>
