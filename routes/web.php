@@ -41,6 +41,8 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 
+
+
 Route::get('/informacion', function () {
     return view('informacion.index');
 })->name('informacion.index');
@@ -62,12 +64,16 @@ Route::put('/productos/{id}', [ProductoController::class, 'update'])
 Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
     ->middleware('auth')
     ->name('productos.destroy');
+
+
 Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
 Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
 
-Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
-
 Route::middleware('auth')->group(function () {
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+});
+    
+Route::middleware(['auth'])->group(function () {
     Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
     Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
 });
