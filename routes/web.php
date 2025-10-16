@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\HistorialPedidoController;
 
 
 
@@ -63,3 +64,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
     Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
 });
+
+
+
+//Historial Pedidos
+Route::get('/pedidos/historial', [HistorialPedidoController::class, 'index'])
+    ->name('pedidos.historial');
+Route::put('/pedidos/{id}/estado', [HistorialPedidoController::class, 'updateEstado'])
+     ->name('pedidos.estado');
+//ruta detalle pedido
+Route::get('/pedidos/{id}/detalle', [HistorialPedidoController::class, 'show'])
+    ->name('pedidos.detalle');
+

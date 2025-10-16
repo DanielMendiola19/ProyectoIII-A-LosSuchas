@@ -303,6 +303,7 @@
                 <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
                 <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
                 <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
+                <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="#"><i class="fas fa-cog me-2"></i> Configuración</a>
