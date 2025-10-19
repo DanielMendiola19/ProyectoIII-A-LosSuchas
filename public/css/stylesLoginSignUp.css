@@ -210,6 +210,17 @@ select {
 }
 
 
+.forgot-link {
+    color: var(--dorado);
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.forgot-link:hover {
+    color: #c89a20; /* un dorado más oscuro para el hover */
+    text-decoration: underline;
+}
 
 
 

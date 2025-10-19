@@ -8,11 +8,17 @@
         <div class="card" onclick="location.href='<?php echo e(route('productos.index')); ?>'">
             <i class="fas fa-coffee"></i> Productos
         </div>
+        <div class="card" onclick="location.href='<?php echo e(route('inventario.index')); ?>'">
+            <i class="fas fa-boxes"></i> Inventario
+        </div>
         <div class="card" onclick="location.href='<?php echo e(route('menu.index')); ?>'">
             <i class="fas fa-store"></i> Menú
         </div>
         <div class="card" onclick="location.href='<?php echo e(route('pedido.index')); ?>'">
             <i class="fas fa-shopping-bag"></i> Pedidos
+        </div>
+        <div class="card" onclick="location.href='<?php echo e(route('pedidos.historial')); ?>'">
+            <i class="fas fa-clock-rotate-left"></i> Historial Pedidos
         </div>
         <div class="card" onclick="location.href='<?php echo e(route('mesas.index')); ?>'">
             <i class="fas fa-chair"></i> Mesas

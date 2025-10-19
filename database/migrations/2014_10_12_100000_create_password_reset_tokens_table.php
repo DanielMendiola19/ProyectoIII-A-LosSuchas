@@ -6,23 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+        Schema::create('password_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->string('correo')->index();
+            $table->string('token', 6);
+            $table->enum('estado', ['activo', 'usado', 'expirado'])->default('activo');
+            $table->timestamp('expires_at');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('password_tokens');
     }
 };

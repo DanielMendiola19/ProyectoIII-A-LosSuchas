@@ -278,6 +278,18 @@
                 font-size: 1.3rem;
             }
         }
+
+        /* SOLUCIÓN PARA EL TEXTO CORTADO */
+.sidebar a[href="{{ route('login.form') }}"] {
+    white-space: normal !important;
+    line-height: 1.3;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    word-wrap: break-word;
+}
     </style>
 
     @stack('styles')
@@ -301,8 +313,10 @@
             <div class="sidebar-nav">
                 <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
                 <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
+                <a href="{{ route('inventario.index') }}"><i class="fas fa-boxes me-2"></i> Inventario</a>
                 <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
                 <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
+                <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
                 <a href="{{ route('mesas.index') }}"><i class="fas fas fa-chair me-2"></i> Mesas</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
                 <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>

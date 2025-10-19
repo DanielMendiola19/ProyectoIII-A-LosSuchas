@@ -42,3 +42,4 @@ class PasswordToken extends Model
         $this->update(['estado' => 'expirado']);
     }
 }
+

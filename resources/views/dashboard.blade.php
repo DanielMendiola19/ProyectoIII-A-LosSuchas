@@ -10,11 +10,17 @@
         <div class="card" onclick="location.href='{{ route('productos.index') }}'">
             <i class="fas fa-coffee"></i> Productos
         </div>
+        <div class="card" onclick="location.href='{{ route('inventario.index') }}'">
+            <i class="fas fa-boxes"></i> Inventario
+        </div>
         <div class="card" onclick="location.href='{{ route('menu.index') }}'">
             <i class="fas fa-store"></i> Menú
         </div>
         <div class="card" onclick="location.href='{{ route('pedido.index') }}'">
             <i class="fas fa-shopping-bag"></i> Pedidos
+        </div>
+        <div class="card" onclick="location.href='{{ route('pedidos.historial') }}'">
+            <i class="fas fa-clock-rotate-left"></i> Historial Pedidos
         </div>
         <div class="card" onclick="location.href='{{ route('mesas.index') }}'">
             <i class="fas fa-chair"></i> Mesas

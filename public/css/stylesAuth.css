@@ -165,4 +165,5 @@ input:focus { border-color: var(--dorado); outline: none; }
   .auth-title { font-size: 1.6rem; }
   .auth-card { padding: 20px 15px; }
   input, .btn { padding: 10px; }
+
 }

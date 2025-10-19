@@ -28,4 +28,5 @@ class SendTokenMail extends Mailable
                         'correo' => $this->correo,
                     ]);
     }
+
 }
