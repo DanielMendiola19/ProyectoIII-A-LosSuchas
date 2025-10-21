@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('numero_mesa', 10);
             $table->integer('capacidad');
             $table->string('estado', 12);
+            $table->integer('pos_x')->default(50); // posición horizontal
+            $table->integer('pos_y')->default(50); // posición vertical
             $table->timestamps();
         });
     }

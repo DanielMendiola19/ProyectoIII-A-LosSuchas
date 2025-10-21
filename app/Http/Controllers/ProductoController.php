@@ -9,13 +9,19 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
+    /** 
+     * Mostrar productos activos (no eliminados)
+     */
     public function index()
     {
-        $productos = Producto::with('categoria')->get();
+        $productos = Producto::with('categoria')->get(); // por defecto no incluye los soft deleted
         $categorias = Categoria::all();
         return view('productos.index', compact('productos', 'categorias'));
     }
 
+    /**
+     * Guardar un nuevo producto
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -29,7 +35,6 @@ class ProductoController extends Controller
         $data = $request->only(['nombre','precio','stock','categoria_id']);
 
         if ($request->hasFile('imagen')) {
-            // guarda en storage/app/public/productos/...
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
@@ -38,6 +43,9 @@ class ProductoController extends Controller
         return back()->with('success', 'Producto agregado correctamente');
     }
 
+    /**
+     * Actualizar producto existente
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -49,11 +57,9 @@ class ProductoController extends Controller
         ]);
 
         $producto = Producto::findOrFail($id);
-
         $data = $request->only(['nombre','precio','stock','categoria_id']);
 
         if ($request->hasFile('imagen')) {
-            // eliminar imagen anterior si existe
             if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
                 Storage::disk('public')->delete($producto->imagen);
             }
@@ -61,21 +67,38 @@ class ProductoController extends Controller
         }
 
         $producto->update($data);
-
         return back()->with('success', 'Producto actualizado correctamente');
     }
 
+    /**
+     * Eliminar producto (borrado lógico)
+     */
     public function destroy($id)
     {
         $producto = Producto::findOrFail($id);
+        $producto->delete(); // 👈 ahora solo marca deleted_at, no elimina la imagen
 
-        // eliminar imagen asociada si existe
-        if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
-            Storage::disk('public')->delete($producto->imagen);
-        }
+        return back()->with('success', 'Producto eliminado correctamente (borrado lógico)');
+    }
 
-        $producto->delete();
+    /**
+     * Mostrar productos eliminados lógicamente
+     */
+    public function eliminados()
+    {
+        $productos = Producto::onlyTrashed()->with('categoria')->get();
+        return view('productos.eliminados', compact('productos'));
+    }
 
-        return back()->with('success', 'Producto eliminado correctamente');
+    /**
+     * Restaurar producto eliminado
+     */
+    public function restaurar($id)
+    {
+        $producto = Producto::onlyTrashed()->findOrFail($id);
+        $producto->restore();
+
+        return redirect()->route('productos.eliminados')
+            ->with('success', 'Producto restaurado correctamente');
     }
 }

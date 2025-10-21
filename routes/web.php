@@ -3,53 +3,103 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PasswordTokenController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\MesaController;
+use App\Http\Controllers\HistorialPedidoController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\InventarioController;
 
+// =========================
+// RUTAS PÚBLICAS
+// =========================
 
-// Página inicial -> splash
-Route::get('/', function () {
-    return view('splash');
-})->name('splash');
+// Splash page
+Route::get('/', fn() => view('splash'))->name('splash');
 
-
-// Formulario
+// Login / Signup
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::get('/signup', [AuthController::class, 'showSignUpForm'])->name('signup.form');
-
-// Acción POST
 Route::post('/signup', [AuthController::class, 'signUp'])->name('signup');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-
-// Validación en tiempo real
 Route::post('/signup/validate', [AuthController::class, 'validateField'])->name('signup.validate');
 
 
-Route::get('/bienvenida', function () {
-    $usuario = Auth::user();
-    return view('bienvenida', compact('usuario'));
-})->middleware('auth')->name('bienvenida');
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Menu y Dashboard (accesibles sin login)
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+
+// =========================
+// RECUPERACIÓN DE CONTRASEÑA (pública)
+// =========================
+Route::get('/forgot-password', [PasswordTokenController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [PasswordTokenController::class, 'sendToken'])->name('password.send');
+Route::get('/verify-code', [PasswordTokenController::class, 'showVerifyCode'])->name('password.verify.code.form');
+Route::post('/verify-code', [PasswordTokenController::class, 'checkCode'])->name('password.check.code');
+Route::get('/reset-password', [PasswordTokenController::class, 'showResetPassword'])->name('password.reset.form');
+Route::post('/reset-password', [PasswordTokenController::class, 'resetPassword'])->name('password.reset');
+Route::get('/generar-token', [PasswordTokenController::class, 'generateToken'])->name('token.generate');
+Route::post('/resend-token', [PasswordTokenController::class, 'resendToken'])->name('password.resend');
+Route::post('/forgot-password/clear', [PasswordTokenController::class, 'clearSession'])->name('password.clear.session');
+
+// =========================
+// RUTAS AUTENTICADAS
+// =========================
+Route::middleware(['auth'])->group(function () {
+
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Bienvenida
+    Route::get('/bienvenida', fn() => view('bienvenida', ['usuario' => Auth::user()]))->name('bienvenida');
+
+    // =========================
+    // Productos e Información -> solo Admin
+    // =========================
+    Route::middleware('role:Administrador')->group(function () {
+        Route::resource('productos', ProductoController::class)->except(['show', 'edit', 'create']);
+        Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
+        Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
+
+        Route::get('/informacion', fn() => view('informacion.index'))->name('informacion.index');
+    });
+
+    // =========================
+    // Mesas -> Admin y Cajero
+    // =========================
+    Route::middleware('role:Administrador,Cajero')->group(function () {
+        Route::resource('mesas', MesaController::class)->except(['show', 'edit', 'create']);
+        Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
+        Route::post('/mesas/guardar-posiciones', [MesaController::class, 'guardarPosiciones'])->name('mesas.guardarPosiciones');
+        Route::post('/mesas/{id}/actualizar-posicion', [MesaController::class, 'actualizarPosicion']);
+    });
+
+    // =========================
+    // Pedidos -> Admin y Cajero
+    // =========================
+    Route::middleware('role:Administrador,Cajero')->group(function () {
+        Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
+        Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
+    });
+
+    // =========================
+    // Historial Pedidos -> Admin, Cajero, Cocinero, Mesero
+    // =========================
+    Route::middleware('role:Administrador,Cajero,Cocinero,Mesero')->group(function () {
+        Route::get('/pedidos/historial', [HistorialPedidoController::class, 'index'])->name('pedidos.historial');
+        Route::get('/pedidos/{id}/detalle', [HistorialPedidoController::class, 'show'])->name('pedidos.detalle');
+        Route::put('/pedidos/{id}/estado', [HistorialPedidoController::class, 'updateEstado'])->name('pedidos.estado');
+    });
 
 
-// Dashboard (se redirige aquí después del splash)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-
-// CRUD de productos protegido
-Route::get('/productos', [ProductoController::class, 'index'])
-    ->middleware('auth')
-    ->name('productos.index');
-
-Route::post('/productos', [ProductoController::class, 'store'])
-    ->middleware('auth')
-    ->name('productos.store');
-
-Route::put('/productos/{id}', [ProductoController::class, 'update'])
-    ->middleware('auth')
-    ->name('productos.update');
-
-Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('productos.destroy');
+    // =========================
+    // Inventario -> Admin, Cocinero
+    // =========================
+    Route::middleware('role:Administrador,Cocinero')->group(function () {
+        Route::get('/inventario', [InventarioController::class, 'index'])->name('inventario.index');
+    Route::post('/inventario/{producto}/aumentar', [InventarioController::class, 'aumentar'])->name('inventario.aumentar');
+    Route::post('/inventario/{producto}/disminuir', [InventarioController::class, 'disminuir'])->name('inventario.disminuir');
+    });
+});
