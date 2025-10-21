@@ -10,6 +10,41 @@
   <div id="inv-alert" class="inv-alert" role="status" aria-live="polite"></div>
 
   <table class="tabla-inventario">
+      <section class="inv-toolbar" aria-label="Filtros de inventario">
+      <div class="inv-field grow">
+        <label for="f-q">Buscar</label>
+        <div class="inv-input-wrap">
+          <span class="inv-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+          <input id="f-q" type="search" placeholder="Buscar producto..." autocomplete="off" />
+          <button type="button" id="f-clear" class="btn-clear" aria-label="Limpiar búsqueda">&times;</button>
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label for="f-sort">Ordenar</label>
+        <select id="f-sort">
+          <option value="name-asc">Nombre (A → Z)</option>
+          <option value="name-desc">Nombre (Z → A)</option>
+          <option value="stock-asc">Stock (menor → mayor)</option>
+          <option value="stock-desc">Stock (mayor → menor)</option>
+        </select>
+      </div>
+
+      <div class="inv-field inv-inline">
+        <label for="f-low">Stock ≤</label>
+        <input id="f-low-val" type="number" min="0" value="5" inputmode="numeric">
+        <label class="switch">
+          <input id="f-low" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="inv-actions">
+        <button type="button" id="f-reset" class="btn-ghost">Restablecer</button>
+        <span id="f-count" class="chip" aria-live="polite"></span>
+      </div>
+    </section>
+
     <thead>
       <tr>
         <th>Imagen</th>

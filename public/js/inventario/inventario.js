@@ -161,3 +161,134 @@ if (action === 'disminuir' && cantidad > maxSub) {
   });
 
 })();
+
+//Inicio filtros
+//Inicio filtros
+//Inicio filtros
+/* ===== Filtros/Búsqueda/Orden – SOLO FRAGMENTO, pegado al final de inventario.js ===== */
+(function () {
+  // Usa los helpers existentes si están; si no, crea mínimos.
+  const $  = window.$  || ((s, c=document) => c.querySelector(s));
+  const $$ = window.$$ || ((s, c=document) => Array.from(c.querySelectorAll(s)));
+
+  const body    = document.getElementById('inv-body') || document.querySelector('.tabla-inventario tbody');
+  if (!body) return;
+
+  // Controles esperados en la toolbar
+  const qInput  = $('#f-q');
+  const btnClr  = $('#f-clear');
+  const sortSel = $('#f-sort');
+  const lowChk  = $('#f-low');
+  const lowVal  = $('#f-low-val');
+  const btnRst  = $('#f-reset');
+  const chipCnt = $('#f-count');
+
+  // Si no existe la toolbar, no hacemos nada:
+  if (!qInput || !sortSel || !lowVal) return;
+
+  // Construcción de filas: toma nombre desde .nombre-prod y stock desde [data-stock] o texto
+  const rows = $$('#inv-body tr, .tabla-inventario tbody tr').map(tr => {
+    const nameEl  = tr.querySelector('.nombre-prod');
+    const stockEl = tr.querySelector('[data-stock]') || tr.querySelector('[data-stock-badge]');
+    const name  = (nameEl?.textContent || '').trim().toLowerCase();
+    const stock = parseInt((stockEl?.textContent || '0').replace(/\D+/g,''), 10) || 0;
+    return { el: tr, name, stock };
+  });
+
+  const KEY = 'inv.filters.v1';
+  const state = loadState() || { q:'', sort:'name-asc', lowEnabled:false, lowValue:5 };
+
+  // UI inicial
+  applyStateToUI();
+  render();
+  toggleClear();
+
+  // Eventos
+  qInput.addEventListener('input', debounce(() => {
+    state.q = (qInput.value || '').trim().toLowerCase();
+    saveState(); render(); toggleClear();
+  }, 120));
+
+  btnClr?.addEventListener('click', () => {
+    qInput.value = '';
+    state.q = '';
+    saveState(); render(); toggleClear(); qInput.focus();
+  });
+
+  sortSel.addEventListener('change', () => {
+    state.sort = sortSel.value;
+    saveState(); render();
+  });
+
+  lowChk?.addEventListener('change', () => {
+    state.lowEnabled = !!lowChk.checked;
+    saveState(); render();
+  });
+
+  lowVal.addEventListener('input', () => {
+    const n = Math.max(0, parseInt(lowVal.value || '0', 10) || 0);
+    state.lowValue = n;
+    saveState(); render();
+  });
+
+  btnRst?.addEventListener('click', () => {
+    state.q = '';
+    state.sort = 'name-asc';
+    state.lowEnabled = false;
+    state.lowValue = 5;
+    saveState(); applyStateToUI(); render(); toggleClear();
+  });
+
+  // Render
+  function render(){
+    const q = (state.q || '').toLowerCase();
+    const lowOn = !!state.lowEnabled;
+    const lowNum = Number(state.lowValue || 0);
+
+    // Filtrar visibilidad
+    let visible = 0;
+    rows.forEach(r => {
+      const matchQ = !q || r.name.includes(q);
+      const matchLow = !lowOn || (r.stock <= lowNum);
+      const show = matchQ && matchLow;
+      r.el.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    // Orden solo sobre visibles
+    const visibles = rows.filter(r => r.el.style.display !== 'none');
+    const [key, dir] = (state.sort || 'name-asc').split('-'); // name|stock - asc|desc
+    visibles.sort((a, b) => {
+      let cmp = 0;
+      if (key === 'name')  cmp = a.name.localeCompare(b.name, 'es', { sensitivity:'base' });
+      if (key === 'stock') cmp = a.stock - b.stock;
+      return dir === 'desc' ? -cmp : cmp;
+    });
+
+    // Reinsertar para reflejar orden
+    const frag = document.createDocumentFragment();
+    visibles.forEach(r => frag.appendChild(r.el));
+    body.appendChild(frag);
+
+    if (chipCnt) chipCnt.textContent = `${visible} de ${rows.length}`;
+  }
+
+  function applyStateToUI(){
+    qInput.value = state.q || '';
+    if (sortSel) sortSel.value = state.sort || 'name-asc';
+    if (lowChk)  lowChk.checked = !!state.lowEnabled;
+    lowVal.value = Number(state.lowValue || 5);
+  }
+
+  function toggleClear(){ if (btnClr) btnClr.style.visibility = qInput.value ? 'visible' : 'hidden'; }
+  function saveState(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(_){} }
+  function loadState(){ try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch(_){ return null; } }
+
+  function debounce(fn, wait){
+    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(null, args), wait); };
+  }
+})();
+//Fin filtros
+//Fin filtros
+//Fin filtros
+
