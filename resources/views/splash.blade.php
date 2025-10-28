@@ -140,26 +140,34 @@
         <div class="star" style="top:70%; left:60%; animation-delay:3s;"></div>
         <div class="star" style="top:80%; left:20%; animation-delay:4s;"></div>
     </div>
+
     <!-- Contenido central -->
     <div class="splash-content">
         <img src="{{ asset('images/logo.png') }}" alt="Logo Coffeeology" class="splash-logo">
         <h1>¡Bienvenido a Coffeeology!</h1>
-        <p>Descubre la ciencia del café y la quimica de cada sorbo</p>
+        <p>Descubre la ciencia del café y la química de cada sorbo</p>
     </div>
 </body>
-<script>
-    // Redirección automática a los 6 segundos
-    let redirectTimeout = setTimeout(() => {
-        window.location.href = "{{ route('dashboard') }}";
-    }, 6000);
 
-    // Si el usuario presiona la barra espaciadora, se redirige antes
-    document.addEventListener('keydown', function(event) {
-        if (event.code === 'Space') {
-            clearTimeout(redirectTimeout); 
-            window.location.href = "{{ route('dashboard') }}";
+<script>
+    let redirected = false; // bandera para evitar redirecciones múltiples
+
+    function goToDashboard() {
+        if (redirected) return; // si ya redirigió, no hace nada
+        redirected = true; // marca que ya se redirigió
+        window.location.href = "{{ route('dashboard') }}";
+    }
+
+    // Redirección automática a los 6 segundos
+    const redirectTimeout = setTimeout(goToDashboard, 6000);
+
+    // Si el usuario presiona la barra espaciadora, se redirige antes (una sola vez)
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' && !redirected) {
+            clearTimeout(redirectTimeout);
+            goToDashboard();
         }
     });
 </script>
-
 </html>
+

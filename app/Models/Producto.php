@@ -27,11 +27,17 @@ class Producto extends Model
     }
     public function detalles()
     {
-        return $this->hasMany(DetallePedido::class);
+        return $this->hasMany(DetallePedido::class)->withTrashed();
     }
 
     public function reportes()
     {
         return $this->hasMany(ReporteDiario::class);
+    }
+
+    // 🔹 NUEVO: Scope para forzar incluir eliminados en ciertos casos
+    public function scopeWithTrashedIfNeeded($query, $includeTrashed = true)
+    {
+        return $includeTrashed ? $query->withTrashed() : $query;
     }
 }

@@ -8,7 +8,10 @@ class HistorialPedidoController extends Controller
 {
     public function index(\Illuminate\Http\Request $request)
     {
-        $query = Pedido::with(['detalles.producto', 'usuario']);
+        $query = Pedido::with([
+            'detalles.producto', // 🔹 Esto ahora incluirá productos eliminados gracias a la relación modificada
+            'usuario'
+        ]);
 
         // Filtro por estado
         if ($request->filled('estado') && $request->estado !== 'todos') {
@@ -24,8 +27,6 @@ class HistorialPedidoController extends Controller
 
         return view('pedidos.historial', compact('pedidos'));
     }
-
-
 
     public function updateEstado($id, \Illuminate\Http\Request $request)
     {
@@ -62,12 +63,18 @@ class HistorialPedidoController extends Controller
         return response()->json(['success' => 'Estado actualizado correctamente']);
     }
 
-
     public function show($id)
     {
-        $pedido = Pedido::with('detalles.producto')->findOrFail($id);
+        // 🔹 CONSULTA MODIFICADA: Incluir productos eliminados en el detalle
+        $pedido = Pedido::with([
+            'detalles' => function($query) {
+                $query->with(['producto' => function($q) {
+                    $q->withTrashed(); // 🔹 Esto fuerza a incluir productos eliminados
+                }]);
+            },
+            'usuario'
+        ])->findOrFail($id);
+        
         return view('pedidos.detalle', compact('pedido'));
     }
-    
-
 }

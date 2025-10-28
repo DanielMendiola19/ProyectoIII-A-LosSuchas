@@ -62,12 +62,18 @@
         @endphp
         <tr data-id="{{ $producto->id }}">
           <td>
-            @if ($producto->imagen)
-              <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="img-prod">
-            @else
-              <div class="img-vacia"></div>
-            @endif
+              @php
+                  $imagenPath = $producto->imagen ? 'storage/' . $producto->imagen : null;
+                  $imagenExiste = $imagenPath && file_exists(public_path($imagenPath));
+              @endphp
+
+              @if ($imagenExiste)
+                  <img src="{{ asset($imagenPath) }}" alt="{{ $producto->nombre }}" class="img-prod">
+              @else
+                  <img src="{{ asset('img/defecto.png') }}" alt="Imagen por defecto" class="img-prod">
+              @endif
           </td>
+
 
           <td class="nombre-prod">{{ $producto->nombre }}</td>
 

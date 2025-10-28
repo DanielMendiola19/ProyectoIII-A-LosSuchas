@@ -15,8 +15,9 @@ class DetallePedido extends Model
         return $this->belongsTo(Pedido::class);
     }
 
+    // 🔹 RELACIÓN MODIFICADA: Siempre incluir productos eliminados
     public function producto()
     {
-        return $this->belongsTo(Producto::class);
+        return $this->belongsTo(Producto::class, 'producto_id')->withTrashed();
     }
 }

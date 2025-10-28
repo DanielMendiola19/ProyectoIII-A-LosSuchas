@@ -101,4 +101,32 @@ class ProductoController extends Controller
         return redirect()->route('productos.eliminados')
             ->with('success', 'Producto restaurado correctamente');
     }
+
+    public function verificarNombre(Request $request)
+    {
+        $nombre = trim($request->get('nombre', ''));
+        $id = $request->get('id'); // opcional, para permitir el mismo nombre al editar si no cambia
+
+        if ($nombre === '') {
+            return response()->json(['existe' => false]);
+        }
+
+        // Normalizar: quitar espacios extra, minúsculas, y quitar números al final tipo "Capuccino 2"
+        $nombreNormalizado = preg_replace('/\s*\d+$/', '', strtolower($nombre));
+
+        $query = \App\Models\Producto::query()
+            ->whereRaw("LOWER(REGEXP_REPLACE(nombre, '\\s*[0-9]+$', '')) = ?", [$nombreNormalizado]);
+
+        // Si está editando, excluir su propio ID
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+
+        $existe = $query->exists();
+
+        return response()->json(['existe' => $existe]);
+    }
+
+    
+
 }

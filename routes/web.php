@@ -62,6 +62,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('productos', ProductoController::class)->except(['show', 'edit', 'create']);
         Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
         Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
+        Route::get('/productos/verificar-nombre', [App\Http\Controllers\ProductoController::class, 'verificarNombre'])->name('productos.verificarNombre');
+
 
         Route::get('/informacion', fn() => view('informacion.index'))->name('informacion.index');
     });
@@ -74,6 +76,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
         Route::post('/mesas/guardar-posiciones', [MesaController::class, 'guardarPosiciones'])->name('mesas.guardarPosiciones');
         Route::post('/mesas/{id}/actualizar-posicion', [MesaController::class, 'actualizarPosicion']);
+        
+        Route::post('/mesas/mantenimiento/{id}', [MesaController::class, 'mantenimiento'])->name('mesas.mantenimiento');
     });
 
     // =========================
