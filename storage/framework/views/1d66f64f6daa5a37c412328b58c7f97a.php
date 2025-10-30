@@ -14,28 +14,41 @@
     <!-- Productos divididos por categoría -->
     <?php $__currentLoopData = $productos->groupBy('categoria.nombre'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categoriaNombre => $productosCategoria): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <h2 class="categoria-titulo"><?php echo e($categoriaNombre); ?></h2>
+
         <div class="products-grid">
             <?php $__currentLoopData = $productosCategoria; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $producto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <?php if($producto->stock > 0): ?>
-                <div class="product-card" 
-                     data-id="<?php echo e($producto->id); ?>" 
-                     data-nombre="<?php echo e($producto->nombre); ?>" 
-                     data-precio="<?php echo e($producto->precio); ?>"
-                     data-imagen="<?php echo e(asset('storage/' . $producto->imagen)); ?>"
-                     data-stock="<?php echo e($producto->stock); ?>">
-                    
-                    <div class="card h-100">
-                        <img src="<?php echo e(asset('storage/'.$producto->imagen)); ?>" alt="<?php echo e($producto->nombre); ?>" class="card-img-top">
-                        <div class="card-body text-center">
-                            <h5 class="card-title"><?php echo e($producto->nombre); ?></h5>
-                            <p class="card-text">Bs <?php echo e(number_format($producto->precio, 2)); ?></p>
-                            <p class="card-text stock-info">Stock: <?php echo e($producto->stock); ?></p>
+                    <?php
+                        // Verifica si existe una imagen válida en storage
+                        $rutaImagen = $producto->imagen ? 'storage/' . $producto->imagen : null;
+                        $imagenValida = $rutaImagen && file_exists(public_path($rutaImagen));
+                        $imagenFinal = $imagenValida ? asset($rutaImagen) : asset('img/defecto.png');
+                    ?>
+
+                    <div class="product-card" 
+                         data-id="<?php echo e($producto->id); ?>" 
+                         data-nombre="<?php echo e($producto->nombre); ?>" 
+                         data-precio="<?php echo e($producto->precio); ?>"
+                         data-imagen="<?php echo e($imagenFinal); ?>"
+                         data-stock="<?php echo e($producto->stock); ?>">
+                        
+                        <div class="card h-100">
+                            <img src="<?php echo e($imagenFinal); ?>" 
+                                 alt="<?php echo e($producto->nombre ?? 'Producto sin nombre'); ?>" 
+                                 class="card-img-top"
+                                 onerror="this.onerror=null; this.src='<?php echo e(asset('img/defecto.png')); ?>';">
+                            
+                            <div class="card-body text-center">
+                                <h5 class="card-title"><?php echo e($producto->nombre); ?></h5>
+                                <p class="card-text">Bs <?php echo e(number_format($producto->precio, 2)); ?></p>
+                                <p class="card-text stock-info">Stock: <?php echo e($producto->stock); ?></p>
+                            </div>
+
+                            <button type="button" class="btn-agregar">
+                                <i class="fas fa-cart-plus"></i> Agregar
+                            </button>
                         </div>
-                        <button type="button" class="btn-agregar">
-                            <i class="fas fa-cart-plus"></i> Agregar
-                        </button>
                     </div>
-                </div>
                 <?php endif; ?>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -64,7 +77,7 @@
 </div>
 
 <!-- Modal de selección de mesa -->
-<div id="modalMesa" class="modal"> <!-- Cambié de modalMesas a modalMesa -->
+<div id="modalMesa" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-chair"></i> Seleccione una mesa</h3>
 
@@ -112,4 +125,5 @@
 <div id="notificacionPedido" class="notificacion-pedido"></div>
 
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.menu.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/pedido/index.blade.php ENDPATH**/ ?>

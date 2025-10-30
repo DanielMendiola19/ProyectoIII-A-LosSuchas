@@ -10,6 +10,111 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorEditarCapacidad = document.getElementById('errorEditarCapacidad');
     const areaMesas = document.getElementById('area-mesas');
 
+
+
+// ✅ Botón de mantenimiento corregido - CON ESTILO PERSONALIZADO
+document.querySelectorAll('.btn-mantenimiento').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const mesaElement = document.querySelector(`.mesa-item[data-id="${id}"]`);
+        const estadoActual = mesaElement?.classList.contains('mantenimiento');
+        
+        const accion = estadoActual ? 'quitar del mantenimiento' : 'poner en mantenimiento';
+        
+        // Usar nuestra confirmación personalizada en lugar de confirm() nativo
+        const confirmado = await mostrarConfirmacion(
+            `¿Estás seguro de que deseas ${accion} esta mesa?`, 
+            'mantenimiento'
+        );
+        
+        if (!confirmado) return;
+
+        try {
+            const res = await fetch(`/mesas/mantenimiento/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                mostrarNotificacion(data.message, 'mantenimiento');
+                setTimeout(() => window.location.reload(), 1200);
+            } else {
+                mostrarNotificacion(data.message || 'Error al actualizar la mesa', 'error');
+            }
+        } catch (err) {
+            console.error('Error completo:', err);
+            mostrarNotificacion('Error de conexión: ' + err.message, 'error');
+        }
+    });
+});
+
+// ✅ Función personalizada para confirmaciones con estilo (AGREGAR ESTA FUNCIÓN)
+function mostrarConfirmacion(mensaje, tipo = 'general') {
+    return new Promise((resolve) => {
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-alert-overlay';
+        overlay.style.display = 'flex';
+
+        // Crear caja de confirmación
+        const alertBox = document.createElement('div');
+        alertBox.className = `custom-alert-box ${tipo === 'mantenimiento' ? 'custom-alert-mantenimiento' : ''}`;
+
+        // Contenido HTML
+        alertBox.innerHTML = `
+            <div class="custom-alert-title">
+                <i class="fas fa-exclamation-triangle"></i> Confirmación
+            </div>
+            <div class="custom-alert-message">${mensaje}</div>
+            <div class="custom-alert-buttons">
+                <button class="custom-alert-btn custom-alert-confirm" id="customConfirmYes">
+                    <i class="fas fa-check"></i> Aceptar
+                </button>
+                <button class="custom-alert-btn custom-alert-cancel" id="customConfirmNo">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        `;
+
+        overlay.appendChild(alertBox);
+        document.body.appendChild(overlay);
+
+        // Event listeners
+        document.getElementById('customConfirmYes').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            resolve(true);
+        });
+
+        document.getElementById('customConfirmNo').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            resolve(false);
+        });
+
+        // Cerrar al hacer clic fuera
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                document.body.removeChild(overlay);
+                resolve(false);
+            }
+        });
+
+        // Cerrar con ESC
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                document.removeEventListener('keydown', handleEsc);
+                document.body.removeChild(overlay);
+                resolve(false);
+            }
+        };
+        document.addEventListener('keydown', handleEsc);
+    });
+}
+
     // ✅ Validar solo números en número de mesa
     numeroMesa.addEventListener('input', () => {
         numeroMesa.value = numeroMesa.value.replace(/\D/g, '');
@@ -203,10 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    mostrarNotificacion('✅ Posiciones guardadas correctamente', 'exito');
+                    mostrarNotificacion(' Posiciones guardadas correctamente', 'exito');
                 } else {
-                    mostrarNotificacion('❌ Error al guardar las posiciones', 'error');
-                }
+                    mostrarNotificacion(' Error al guardar las posiciones', 'error');
+                }   
             } catch (err) {
                 console.error('Error:', err);
                 mostrarNotificacion('⚠️ Error de conexión al guardar', 'error');
@@ -215,3 +320,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
    
 });
+
+

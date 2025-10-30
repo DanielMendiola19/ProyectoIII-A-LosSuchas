@@ -16,7 +16,133 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
     const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
     const confirmacionMensaje = document.getElementById('confirmacionMensaje');
+
+    const btnGuardarCambios = editForm.querySelector('button[type="submit"]');
+
     let formEliminarActual = null;
+
+
+    const formNuevo = document.getElementById('productForm');
+
+
+
+
+    async function validarNombreYActualizarBoton() {
+        const id = document.getElementById('editId').value || null;
+        const nombreValido = await verificarNombreUnico(editNombreInput, id);
+        btnGuardarCambios.disabled = !nombreValido;
+    }
+
+
+    // 🔹 Verificación de nombre único en tiempo real
+    async function verificarNombreUnico(input, id = null) {
+        const nombre = input.value.trim();
+        if (!nombre) {
+            limpiarError(input);
+            return true;
+        }
+
+        try {
+            const url = id
+                ? `/productos/verificar-nombre?nombre=${encodeURIComponent(nombre)}&id=${id}`
+                : `/productos/verificar-nombre?nombre=${encodeURIComponent(nombre)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.existe) {
+                mostrarError(input, 'Ya existe un producto con un nombre similar.');
+                return false;
+            } else {
+                limpiarError(input);
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+            mostrarError(input, 'Error verificando nombre en el servidor.');
+            return false;
+        }
+    }
+
+    // 🔹 Escucha en tiempo real para los campos de nombre
+    const nombreInput = document.getElementById('nombre');
+    const editNombreInput = document.getElementById('editNombre');
+
+    if (nombreInput) {
+        nombreInput.addEventListener('input', async function () {
+            await verificarNombreUnico(this);
+        });
+    }
+
+    if (editNombreInput) {
+        editNombreInput.addEventListener('input', async function () {
+            const id = document.getElementById('editId')?.value || null;
+            // Esto mantiene la verificación y el mensaje de error como antes
+            await verificarNombreUnico(this, id);
+            // Esto actualiza el estado del botón de guardar según el resultado
+            validarNombreYActualizarBoton();
+        });
+    }
+
+
+    // 🔹 Modificar envío de formularios para incluir esta validación
+    if (formNuevo) {
+        formNuevo.addEventListener('submit', async e => {
+            e.preventDefault();
+            const nombreValido = await verificarNombreUnico(nombreInput);
+            const precioValido = validarNumeroEnTiempoReal(precioInput, 1, 100, false, 'precio');
+            const stockValido = validarNumeroEnTiempoReal(stockInput, 0, 50, true, 'stock');
+            const imagenValida = validarImagen(inputImagen);
+
+            if (!nombreValido || !precioValido || !stockValido || !imagenValida) {
+                mostrarNotificacion('Por favor corrige los errores en el formulario.', 'error');
+                return;
+            }
+
+            formNuevo.submit();
+        });
+    }
+
+    editForm.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const id = document.getElementById('editId').value;
+        const nombreValido = await verificarNombreUnico(editNombreInput, id);
+        const editPrecioInput = document.getElementById('editPrecio');
+        const editStockInput = document.getElementById('editStock');
+
+        const precioValido = validarNumeroEnTiempoReal(editPrecioInput, 1, 100, false, 'precio');
+        const stockValido = validarNumeroEnTiempoReal(editStockInput, 0, 50, true, 'stock');
+        const imagenValida = validarImagen(editImagenInput);
+
+        if (!nombreValido || !precioValido || !stockValido || !imagenValida) {
+            mostrarNotificacion('Por favor corrige los errores en el formulario.', 'error');
+            return;
+        }
+
+        const formData = new FormData(editForm);
+        try {
+            const response = await fetch(`/productos/${id}`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-HTTP-Method-Override': 'PUT'
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                mostrarNotificacion('Producto actualizado exitosamente', 'exito');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                mostrarNotificacion('Error al actualizar producto', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            mostrarNotificacion('Error de conexión', 'error');
+        }
+    });
+
 
     // 🔹 Crear elementos para mensajes de error
     function crearMensajesError() {
@@ -304,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
             limpiarError(document.getElementById('editStock'));
 
             modal.classList.add('show');
+            validarNombreYActualizarBoton();
         }
     });
 
@@ -354,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ✅ Validar antes de agregar nuevo producto
-    const formNuevo = document.getElementById('productForm');
+    
     if (formNuevo) {
         formNuevo.addEventListener('submit', e => {
             const precioInput = document.getElementById('precio');

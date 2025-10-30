@@ -13,11 +13,17 @@
             <?php $__empty_1 = true; $__currentLoopData = $categoria->productos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $producto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="product-card">
                     <div class="card h-100">
-                        <?php if($producto->imagen): ?>
-                            <img src="<?php echo e(asset('storage/'.$producto->imagen)); ?>" class="card-img-top" alt="<?php echo e($producto->nombre); ?>">
+                        <?php
+                            $imagenPath = $producto->imagen ? 'storage/' . $producto->imagen : null;
+                            $imagenExiste = $imagenPath && file_exists(public_path($imagenPath));
+                        ?>
+
+                        <?php if($imagenExiste): ?>
+                            <img src="<?php echo e(asset($imagenPath)); ?>" class="card-img-top" alt="<?php echo e($producto->nombre); ?>">
                         <?php else: ?>
-                            <img src="<?php echo e(asset('images/default.jpg')); ?>" class="card-img-top" alt="Imagen no disponible">
+                            <img src="<?php echo e(asset('img/defecto.png')); ?>" class="card-img-top" alt="Imagen no disponible">
                         <?php endif; ?>
+
                         <div class="card-body text-center">
                             <h5 class="card-title"><?php echo e($producto->nombre); ?></h5>
                             <p class="card-text"><?php echo e($producto->descripcion); ?></p>
@@ -49,4 +55,5 @@
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.menu.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\UNIVALLE\6TO SEMESTRE\Proyecto de Sistemas III\Coffeeology\ProyectoIII-A-LosSuchas\resources\views/menu/index.blade.php ENDPATH**/ ?>

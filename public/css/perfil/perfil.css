@@ -1,0 +1,243 @@
+/* 🎨 Paleta de colores del sistema */
+:root {
+    --negro-carbon: #0D0D0D;
+    --dorado: #E6B325;
+    --blanco-hueso: #FAF9F6;
+    --gris-suave: #C0C0C0;
+    --cafe-espresso: #4B2E2E;
+    --dorado-hover: #c9981f;
+    --verde-exito: #5cb85c;
+    --azul-info: #5bc0de;
+    --rojo-peligro: #dc3545;
+}
+
+/* Body y contenedor */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
+    color: var(--blanco-hueso);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.perfil-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.perfil-container h1 {
+    text-align: center;
+    color: var(--dorado);
+    font-size: 2.8rem;
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px rgba(230,179,37,0.5);
+}
+
+/* Card de perfil */
+.perfil-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(230,179,37,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.perfil-info p {
+    font-size: 1.1rem;
+    margin: 12px 0;
+}
+
+.perfil-info strong {
+    color: var(--dorado);
+}
+
+/* Pedidos recientes */
+.perfil-pedidos {
+    margin-top: 25px;
+}
+
+.perfil-pedidos h3 {
+    color: var(--dorado);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.perfil-pedidos ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.perfil-pedidos li {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(230,179,37,0.2);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.perfil-pedidos li:hover {
+    box-shadow: 0 5px 15px rgba(230,179,37,0.3);
+    transform: translateY(-2px);
+}
+
+/* Acciones (botones) */
+.perfil-acciones {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.perfil-acciones a {
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.perfil-acciones .btn-principal {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-hover));
+    color: var(--negro-carbon);
+    border: none;
+}
+
+.perfil-acciones .btn-principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230,179,37,0.4);
+}
+
+.perfil-acciones .btn-secundario {
+    background: transparent;
+    color: var(--gris-suave);
+    border: 2px solid var(--gris-suave);
+}
+
+.perfil-acciones .btn-secundario:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--blanco-hueso);
+    border-color: var(--blanco-hueso);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .perfil-acciones {
+        flex-direction: column;
+    }
+
+    .perfil-acciones a {
+        width: 100%;
+    }
+
+    .perfil-info p {
+        font-size: 1rem;
+    }
+
+    .perfil-pedidos h3 {
+        font-size: 1.3rem;
+    }
+
+    .perfil-pedidos li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+/* Formulario de cambio de contraseña */
+#form-cambiar-password {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#form-cambiar-password .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#form-cambiar-password label {
+    color: var(--dorado);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+#form-cambiar-password input {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(230,179,37,0.3);
+    background: rgba(255,255,255,0.05);
+    color: var(--blanco-hueso);
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+#form-cambiar-password input:focus {
+    outline: none;
+    border-color: var(--dorado);
+    box-shadow: 0 0 0 2px rgba(230,179,37,0.3);
+    background: rgba(255,255,255,0.1);
+}
+
+/* Botón de guardar */
+#form-cambiar-password .btn-principal {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-hover));
+    color: var(--negro-carbon);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#form-cambiar-password .btn-principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230,179,37,0.4);
+}
+
+/* Mensajes de error */
+#form-cambiar-password small {
+    font-size: 0.9rem;
+    color: var(--rojo-peligro);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    #form-cambiar-password {
+        gap: 15px;
+    }
+
+    #form-cambiar-password label {
+        font-size: 1rem;
+    }
+
+    #form-cambiar-password input {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+
+    #form-cambiar-password .btn-principal {
+        font-size: 0.95rem;
+        padding: 10px 15px;
+    }
+}
+

@@ -31,6 +31,7 @@
     <div class="stats">
         <span class="disponibles">Disponibles: <?php echo e($disponibles); ?></span>
         <span class="ocupadas">Ocupadas: <?php echo e($ocupadas); ?></span>
+        <span class="mantenimiento">En mantenimiento: <?php echo e($mantenimiento); ?></span>
     </div>
 
     <!-- 🔹 FORMULARIO CREAR -->
@@ -38,13 +39,13 @@
         <?php echo csrf_field(); ?>
         <div>
             <label for="numero_mesa">Número de Mesa:</label>
-            <input type="text" id="numero_mesa" name="numero_mesa" required>
+            <input type="text" id="numero_mesa" name="numero_mesa" required placeholder="Ejemplo: 1, 2, 3...">
             <span id="errorNumero" class="input-error"></span>
         </div>
 
         <div>
             <label for="capacidad">Capacidad:</label>
-            <input type="number" id="capacidad" name="capacidad" required min="2" max="6">
+            <input type="number" id="capacidad" name="capacidad" required min="2" max="6" placeholder="2-6 personas">
             <span id="errorCapacidad" class="input-error"></span>
         </div>
 
@@ -53,6 +54,7 @@
             <select name="estado" required>
                 <option value="disponible">Disponible</option>
                 <option value="ocupada">Ocupada</option>
+                <option value="mantenimiento">Mantenimiento</option>
             </select>
         </div>
 
@@ -74,16 +76,25 @@
                 <tr>
                     <td><?php echo e($mesa->numero_mesa); ?></td>
                     <td><?php echo e($mesa->capacidad); ?></td>
-                    <td class="<?php echo e($mesa->estado === 'ocupada' ? 'estado-ocupada' : 'estado-disponible'); ?>">
+                    <td class="
+                        <?php echo e($mesa->estado === 'ocupada' ? 'estado-ocupada' : ''); ?>
+
+                        <?php echo e($mesa->estado === 'disponible' ? 'estado-disponible' : ''); ?>
+
+                        <?php echo e($mesa->estado === 'mantenimiento' ? 'estado-mantenimiento' : ''); ?>
+
+                    ">
                         <?php echo e(ucfirst($mesa->estado)); ?>
 
                     </td>
+                    <!-- En la tabla, actualiza el botón de mantenimiento -->
                     <td>
                         <button class="btn btn-editar" data-mesa='<?php echo json_encode($mesa, 15, 512) ?>'>Editar</button>
-                        <form action="<?php echo e(route('mesas.destroy', $mesa)); ?>" method="POST" style="display:inline">
-                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                            <button type="submit" class="btn btn-eliminar">Eliminar</button>
-                        </form>
+                        <button class="btn btn-mantenimiento" data-id="<?php echo e($mesa->id); ?>">
+                            <i class="fas fa-tools"></i> 
+                            <?php echo e($mesa->estado === 'mantenimiento' ? 'Quitar Mantenimiento' : 'Poner Mantenimiento'); ?>
+
+                        </button>
                     </td>
                 </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -113,6 +124,7 @@
                 <select id="edit_estado" name="estado" required>
                     <option value="disponible">Disponible</option>
                     <option value="ocupada">Ocupada</option>
+                    <option value="mantenimiento">Mantenimiento</option>
                 </select>
             </div>
 
