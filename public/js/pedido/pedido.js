@@ -150,12 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarNotificacion('🛒 Carrito vacío', 'info');
             return;
         }
+        const mesasDisponibles = document.querySelectorAll('.mesa-item.disponible');
+        if (mesasDisponibles.length === 0) {
+            mostrarNotificacion('❌ No hay mesas disponibles en este momento', 'error');
+            return;
+        }
+        
         abrirModal(modalCarrito);
     });
 
     btnCerrarCarrito.addEventListener('click', () => cerrarModal(modalCarrito));
 
     btnSiguiente.addEventListener('click', () => {
+        // Verificar si hay mesas disponibles antes de continuar
+        const mesasDisponibles = document.querySelectorAll('.mesa-item.disponible');
+        if (mesasDisponibles.length === 0) {
+            mostrarNotificacion('❌ No hay mesas disponibles en este momento', 'error');
+            cerrarModal(modalCarrito);
+            return;
+        }
+        
         cerrarModal(modalCarrito);
         abrirModal(modalMesa);
     });

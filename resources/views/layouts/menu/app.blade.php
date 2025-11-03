@@ -358,6 +358,13 @@
                 <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
                     {{ Auth::user()->correo }}
                 </p>
+                <form method="GET" action="{{ route('perfil.index') }}" style="margin-bottom: 12px">
+                    @csrf
+                    <button type="submit" 
+                        style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                        Ver Perfil
+                    </button>
+                </form>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

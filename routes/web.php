@@ -10,6 +10,8 @@ use App\Http\Controllers\MesaController;
 use App\Http\Controllers\HistorialPedidoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\PerfilController;
+
 
 // =========================
 // RUTAS PÚBLICAS
@@ -106,4 +108,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/inventario/{producto}/aumentar', [InventarioController::class, 'aumentar'])->name('inventario.aumentar');
     Route::post('/inventario/{producto}/disminuir', [InventarioController::class, 'disminuir'])->name('inventario.disminuir');
     });
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Perfil de usuario
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    Route::post('/perfil/cambiar-password', [PerfilController::class, 'cambiarPassword'])->name('perfil.cambiarPassword');  
 });

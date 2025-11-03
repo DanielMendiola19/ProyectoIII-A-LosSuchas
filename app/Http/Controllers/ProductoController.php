@@ -127,6 +127,28 @@ class ProductoController extends Controller
         return response()->json(['existe' => $existe]);
     }
 
+public function apiProductos()
+{
+    // Trae todos los productos con su categoría
+    $productos = Producto::with('categoria')->get();
+
+    // Mapear para devolver solo los campos necesarios
+    $data = $productos->map(function($producto) {
+        return [
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'precio' => $producto->precio,
+            'categoria' => $producto->categoria->nombre ?? null,
+            // Devuelve URL completa de la imagen, o null si no tiene
+            'imagen_url' => $producto->imagen 
+                ? url('storage/' . $producto->imagen) 
+                : url('images/default-product.png')
+        ];
+    });
+
+    return response()->json($data);
+}
+
     
 
 }

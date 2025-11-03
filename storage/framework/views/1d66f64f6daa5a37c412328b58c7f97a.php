@@ -77,19 +77,27 @@
 </div>
 
 <!-- Modal de selección de mesa -->
+<!-- Modal de selección de mesa -->
 <div id="modalMesa" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-chair"></i> Seleccione una mesa</h3>
 
         <div id="listaMesas" class="mesas-grid">
-            <?php $__currentLoopData = $mesas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mesa): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="mesa-item <?php echo e($mesa->estado === 'ocupada' ? 'ocupada' : 'disponible'); ?>"
-                     data-id="<?php echo e($mesa->id); ?>"
-                     data-estado="<?php echo e($mesa->estado); ?>">
-                    <p>Mesa <?php echo e($mesa->numero_mesa); ?></p>
-                    <small>Capacidad: <?php echo e($mesa->capacidad); ?></small>
+            <?php if($mesas->count() > 0): ?>
+                <?php $__currentLoopData = $mesas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mesa): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="mesa-item <?php echo e($mesa->estado === 'ocupada' ? 'ocupada' : 'disponible'); ?>"
+                         data-id="<?php echo e($mesa->id); ?>"
+                         data-estado="<?php echo e($mesa->estado); ?>">
+                        <p>Mesa <?php echo e($mesa->numero_mesa); ?></p>
+                        <small>Capacidad: <?php echo e($mesa->capacidad); ?></small>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
+                <div class="carrito-vacio" style="grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--rojo-peligro);"></i>
+                    <p>No hay mesas disponibles en este momento</p>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
         </div>
 
         <div class="modal-actions">

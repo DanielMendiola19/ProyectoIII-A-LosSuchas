@@ -77,19 +77,27 @@
 </div>
 
 <!-- Modal de selección de mesa -->
+<!-- Modal de selección de mesa -->
 <div id="modalMesa" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-chair"></i> Seleccione una mesa</h3>
 
         <div id="listaMesas" class="mesas-grid">
-            @foreach ($mesas as $mesa)
-                <div class="mesa-item {{ $mesa->estado === 'ocupada' ? 'ocupada' : 'disponible' }}"
-                     data-id="{{ $mesa->id }}"
-                     data-estado="{{ $mesa->estado }}">
-                    <p>Mesa {{ $mesa->numero_mesa }}</p>
-                    <small>Capacidad: {{ $mesa->capacidad }}</small>
+            @if($mesas->count() > 0)
+                @foreach ($mesas as $mesa)
+                    <div class="mesa-item {{ $mesa->estado === 'ocupada' ? 'ocupada' : 'disponible' }}"
+                         data-id="{{ $mesa->id }}"
+                         data-estado="{{ $mesa->estado }}">
+                        <p>Mesa {{ $mesa->numero_mesa }}</p>
+                        <small>Capacidad: {{ $mesa->capacidad }}</small>
+                    </div>
+                @endforeach
+            @else
+                <div class="carrito-vacio" style="grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--rojo-peligro);"></i>
+                    <p>No hay mesas disponibles en este momento</p>
                 </div>
-            @endforeach
+            @endif
         </div>
 
         <div class="modal-actions">
