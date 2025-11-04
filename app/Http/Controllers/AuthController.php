@@ -169,15 +169,39 @@ class AuthController extends Controller
             return back()->withErrors(['general' => $message])->withInput();
         }
 
-        // ✅ Iniciar sesión real
+        // Iniciar sesión
         Auth::login($usuario);
 
         if ($request->expectsJson()) {
-            return response()->json(['message' => 'Inicio de sesión exitoso'], 200);
+            return response()->json([
+                'message' => 'Inicio de sesión exitoso',
+                'usuario' => $usuario
+            ], 200);
         }
-        //return redirect('/bienvenida'); // Redirige al dashboard real
+        //return redirect('/bienvenida'); // Redirige al dashboard
         return redirect('/');
     }
+
+    public function loginApi(Request $request)
+    {
+        $request->validate([
+            'correo' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $usuario = Usuario::where('correo', $request->correo)->first();
+
+        if (!$usuario || !Hash::check($request->password, $usuario->contrasena)) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        }
+
+        return response()->json([
+            'message' => 'Inicio de sesión exitoso',
+            'usuario' => $usuario
+        ], 200);
+    }
+
+    
 
     public function logout(Request $request)
     {
