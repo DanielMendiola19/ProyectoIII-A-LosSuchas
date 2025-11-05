@@ -13,7 +13,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
     <!-- Font Awesome para íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin para mostrar etiquetas dentro de las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
     <style>
         :root {
             --negro-carbon: #0D0D0D;
@@ -549,7 +553,7 @@
                 <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
                 <a href="{{ route('mesas.index') }}"><i class="fas fa-chair me-2"></i> Mesas</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
-                <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+                <a href="{{ route('reportes.index') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info"></i> Informacion</a>
             </div>
             <hr>
@@ -667,6 +671,12 @@
                 }
             });
         });
+
+        window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+            window.location.reload(); // recarga la página si venimos de historial
+        }
+    });
     </script>
 
     @stack('scripts')

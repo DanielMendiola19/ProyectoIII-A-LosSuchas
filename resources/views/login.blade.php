@@ -93,6 +93,22 @@
     const fields = ['correo', 'password'];
     const pwInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
+    const correoInput = document.getElementById('correo');
+    const passwordInput = document.getElementById('password');
+
+    // Evitar espacios al inicio y al final
+    [correoInput, passwordInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/^\s+|\s+$/g, ''); // elimina espacios al inicio y final
+      });
+    });
+
+    // Si también quieres bloquear espacios dentro de la contraseña:
+    passwordInput.addEventListener('input', () => {
+      passwordInput.value = passwordInput.value.replace(/\s/g, ''); // elimina todos los espacios
+    });
+
+
 
     // Toggle ojo
     togglePassword.addEventListener('click', () => {

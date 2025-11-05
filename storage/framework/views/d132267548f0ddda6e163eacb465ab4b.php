@@ -319,7 +319,7 @@
                 <a href="<?php echo e(route('pedidos.historial')); ?>"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
                 <a href="<?php echo e(route('mesas.index')); ?>"><i class="fas fa-chair me-2"></i> Mesas</a>
                 <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
-                <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+                <a href="reportes.index"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="<?php echo e(route('informacion.index')); ?>"><i class="fa-solid fa-circle-info"></i> Informacion</a>
 
             </div>
@@ -360,6 +360,13 @@
                     <?php echo e(Auth::user()->correo); ?>
 
                 </p>
+                <form method="GET" action="<?php echo e(route('perfil.index')); ?>" style="margin-bottom: 12px">
+                    <?php echo csrf_field(); ?>
+                    <button type="submit" 
+                        style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                        Ver Perfil
+                    </button>
+                </form>
 
                 <form method="POST" action="<?php echo e(route('logout')); ?>">
                     <?php echo csrf_field(); ?>

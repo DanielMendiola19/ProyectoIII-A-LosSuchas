@@ -11,6 +11,8 @@ use App\Http\Controllers\HistorialPedidoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReporteVentasController;
 
 
 // =========================
@@ -19,6 +21,14 @@ use App\Http\Controllers\PerfilController;
 
 // Splash page
 Route::get('/', fn() => view('splash'))->name('splash');
+
+
+Route::group(['middleware' => ['auth', 'nocache']], function() {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    // otras rutas protegidas
+});
+
 
 // Login / Signup
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -32,6 +42,10 @@ Route::post('/signup/validate', [AuthController::class, 'validateField'])->name(
 // Menu y Dashboard (accesibles sin login)
 Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+
 
 // =========================
 // RECUPERACIÓN DE CONTRASEÑA (pública)
@@ -88,6 +102,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:Administrador,Cajero')->group(function () {
         Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
         Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
+        Route::get('/reportes',      [ReporteVentasController::class, 'index'])->name('reportes.index');
+        Route::get('/reportes/data', [ReporteVentasController::class, 'data'])->name('reportes.data');
+        Route::get('/reportes/pdf',  [ReporteVentasController::class, 'exportPdf'])->name('reportes.pdf');
     });
 
     // =========================
@@ -115,3 +132,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::post('/perfil/cambiar-password', [PerfilController::class, 'cambiarPassword'])->name('perfil.cambiarPassword');  
 });
+
+    // =========================
+    // Reportes
+    // =========================
+
+
