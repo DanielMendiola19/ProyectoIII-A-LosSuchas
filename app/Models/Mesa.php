@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mesa extends Model
 {
-    protected $fillable = ['numero_mesa', 'capacidad', 'estado'];
+    protected $fillable = ['numero_mesa', 'capacidad', 'estado', 'pos_x', 'pos_y'];
 
     public function pedidos()
     {

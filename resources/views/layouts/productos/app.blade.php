@@ -52,7 +52,18 @@
             border-radius: 0 25px 25px 0;
             z-index: 1000;
             transition: left 0.3s ease;
+            overflow-y: auto;      /* Permite scroll vertical */
+            -webkit-overflow-scrolling: touch; /* Suaviza el scroll en móviles */
         }
+        .sidebar::-webkit-scrollbar {
+            width: 6px;  /* Ancho del scroll */
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(230,179,37,0.6);
+            border-radius: 3px;
+        }
+
 
         .sidebar.active {
             left: 0;
@@ -267,6 +278,18 @@
                 font-size: 1.3rem;
             }
         }
+
+        /* SOLUCIÓN PARA EL TEXTO CORTADO */
+.sidebar a[href="{{ route('login.form') }}"] {
+    white-space: normal !important;
+    line-height: 1.3;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    word-wrap: break-word;
+}
     </style>
 
     @stack('styles')
@@ -287,11 +310,18 @@
         </div>
 
         <h2>Coffeeology</h2>
-        <a href="{{ route('dashboard') }}">Dashboard</a>
-        <a href="{{ route('productos.index') }}">Productos</a>
-        <a href="#">Usuarios</a>
-        <a href="#">Reportes</a>
-        <a href="#">Configuración</a>
+            <div class="sidebar-nav">
+                <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+                <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
+                <a href="{{ route('inventario.index') }}"><i class="fas fa-boxes me-2"></i> Inventario</a>
+                <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
+                <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
+                <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
+                <a href="{{ route('mesas.index') }}"><i class="fas fas fa-chair me-2"></i> Mesas</a>
+                <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
+                <a href="{{ route('reportes.index') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+                <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info"></i> Informacion</a>
+            </div>
         <hr>
 
         {{-- 🔑 Auth Links --}}
@@ -327,6 +357,13 @@
                 <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
                     {{ Auth::user()->correo }}
                 </p>
+                <form method="GET" action="{{ route('perfil.index') }}" style="margin-bottom: 12px">
+                    @csrf
+                    <button type="submit" 
+                        style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                        Ver Perfil
+                    </button>
+                </form>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -401,6 +438,12 @@
                 }
             });
         });
+
+        window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+            window.location.reload(); // recarga la página si venimos de historial
+        }
+    });
     </script>
 
     @stack('scripts')

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; 
 
 class Producto extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'productos';
 
@@ -26,11 +27,17 @@ class Producto extends Model
     }
     public function detalles()
     {
-        return $this->hasMany(DetallePedido::class);
+        return $this->hasMany(DetallePedido::class)->withTrashed();
     }
 
     public function reportes()
     {
         return $this->hasMany(ReporteDiario::class);
+    }
+
+    // 🔹 NUEVO: Scope para forzar incluir eliminados en ciertos casos
+    public function scopeWithTrashedIfNeeded($query, $includeTrashed = true)
+    {
+        return $includeTrashed ? $query->withTrashed() : $query;
     }
 }

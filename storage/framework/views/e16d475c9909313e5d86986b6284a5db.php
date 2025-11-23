@@ -42,17 +42,73 @@
             <span class="error" id="error-password"></span>
         </div>
 
+        <!-- Enlace "Olvidaste tu contraseña" -->
+        <p style="text-align:right; margin-top:-10px; margin-bottom:15px;">
+            <a href="<?php echo e(route('password.request')); ?>" class="forgot-link">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </p>
+
+
         <button type="submit" class="btn">Ingresar</button>
         <p class="switch">¿No tienes cuenta? <a href="<?php echo e(route('signup.form')); ?>">Regístrate</a></p>
     </form>
+    <a href="<?php echo e(route('dashboard')); ?>" class="back-dashboard">
+          Volver al inicio
+      </a>
+
+      <style>
+      .back-dashboard {
+          display: block;           /* Para centrar con margin auto */
+          text-align: center;       /* Centrar texto */
+          margin: 20px auto 0 auto; /* Separación arriba y centrado horizontal */
+          color: #333;
+          text-decoration: none;
+          font-weight: bold;
+          font-size: 0.85rem;       /* Letra más pequeña */
+          transition: all 0.3s ease;
+      }
+
+      .back-dashboard:hover {
+          color: #f5c518;           /* Color dorado */
+          transform: translateY(-2px); /* Pequeña animación al hover */
+      }
+      </style>
+
     </div>
   </div>
+  <?php if(session('success')): ?>
+  <script>
+      Swal.fire({
+          icon: 'success',
+          title: '¡Listo!',
+          text: '<?php echo e(session('success')); ?>',
+          confirmButtonText: 'Aceptar'
+      });
+  </script>
+  <?php endif; ?>
 
   <script>
     const loginForm = document.getElementById('loginForm');
     const fields = ['correo', 'password'];
     const pwInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
+    const correoInput = document.getElementById('correo');
+    const passwordInput = document.getElementById('password');
+
+    // Evitar espacios al inicio y al final
+    [correoInput, passwordInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/^\s+|\s+$/g, ''); // elimina espacios al inicio y final
+      });
+    });
+
+    // Si también quieres bloquear espacios dentro de la contraseña:
+    passwordInput.addEventListener('input', () => {
+      passwordInput.value = passwordInput.value.replace(/\s/g, ''); // elimina todos los espacios
+    });
+
+
 
     // Toggle ojo
     togglePassword.addEventListener('click', () => {

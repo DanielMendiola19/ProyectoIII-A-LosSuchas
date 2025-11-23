@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->text('imagen')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
