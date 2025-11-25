@@ -25,7 +25,7 @@
         <div class="card" onclick="location.href='{{ route('mesas.index') }}'">
             <i class="fas fa-chair"></i> Mesas
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='{{ route('usuarios.index') }}'">
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card" onclick="location.href='{{ route('reportes.index') }}'">
