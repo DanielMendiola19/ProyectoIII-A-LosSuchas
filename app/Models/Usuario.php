@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable; // <- Cambiado
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes; // <-- agregado
 
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes; // <-- agregado SoftDeletes
 
     protected $fillable = ['nombre', 'apellido', 'correo', 'contrasena', 'rol_id'];
 
-    // Cambiar el nombre del campo de password para Auth
     protected $hidden = ['contrasena', 'remember_token'];
 
     public function getAuthPassword() {
