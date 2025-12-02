@@ -8,13 +8,12 @@
 <div class="rpt-wrapper">
     <h1 class="rpt-title">Reportes de Ventas</h1>
   
-
     {{-- Toolbar de filtros --}}
     <section class="rpt-toolbar">
-                <div class="rpt-field">
+        <div class="rpt-field">
             <label>Tipo de reporte</label>
             <div class="rpt-input-pill">
-                <span class="rpt-pill-icon"><i class="bi bi-bar-chart"></i></span>
+                <span class="rpt-pill-icon"><i class="bi bi-bar-chart-fill"></i></span>
                 <span class="rpt-pill-text">Ventas</span>
             </div>
         </div>
@@ -22,7 +21,7 @@
         <div class="rpt-field">
             <label>Desde</label>
             <div class="rpt-input-wrap">
-                <span class="rpt-icon"><i class="bi bi-calendar"></i></span>
+                <span class="rpt-icon"><i class="bi bi-calendar4-week"></i></span>
                 <input type="date" id="rpt-desde">
             </div>
         </div>
@@ -30,11 +29,22 @@
         <div class="rpt-field">
             <label>Hasta</label>
             <div class="rpt-input-wrap">
-                <span class="rpt-icon"><i class="bi bi-calendar"></i></span>
+                <span class="rpt-icon"><i class="bi bi-calendar4-week"></i></span>
                 <input type="date" id="rpt-hasta">
             </div>
         </div>
 
+        {{-- Agrupación para el PDF --}}
+        <div class="rpt-field rpt-field-agrupacion">
+    <label>Agrupación</label>
+    <div class="rpt-input-wrap rpt-input-wrap--select">
+        <select id="rpt-agrupacion" name="agrupacion" class="rpt-select">
+            <option value="dia">Día</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mes</option>
+        </select>
+    </div>
+</div>
 
         <div class="rpt-actions">
             <button class="btn-ghost" id="btn-generar">Generar</button>
@@ -42,7 +52,7 @@
         </div>
     </section>
 
-    {{-- Tabla principal de resultados --}}
+    {{-- Tabla principal de resultados (pantalla) --}}
     <section class="tabla-contenedor">
         <table class="tabla-inventario" id="rpt-tabla">
             <thead>
@@ -57,7 +67,7 @@
                 <tr class="rpt-empty">
                     <td colspan="4">
                         Sin resultados. Selecciona un rango de fechas y haz clic en
-                        <b>Generar</b>.
+                        Generar.
                     </td>
                 </tr>
             </tbody>
@@ -66,23 +76,23 @@
 
     {{-- Resumen --}}
     <section class="tabla-contenedor rpt-summary">
-    <table class="tabla-inventario">
-        <thead>
-            <tr>
-                <th>Productos</th>
-                <th>Cantidad total</th>
-                <th>Total vendido (Bs)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id="rpt-prod">0</td>
-                <td id="rpt-cant">0</td>
-                <td id="rpt-monto">0.00</td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+        <table class="tabla-inventario">
+            <thead>
+                <tr>
+                    <th>Productos</th>
+                    <th>Cantidad total</th>
+                    <th>Total vendido (Bs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="rpt-prod">0</td>
+                    <td id="rpt-cant">0</td>
+                    <td id="rpt-monto">0.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
 
     {{-- Reportes diarios automáticos --}}
     <section class="tabla-contenedor rpt-daily">
@@ -125,6 +135,7 @@
 
     const inpDesde = $('#rpt-desde');
     const inpHasta = $('#rpt-hasta');
+    const selAgrup = $('#rpt-agrupacion');
     const btnGen   = $('#btn-generar');
     const btnPdf   = $('#btn-export-pdf');
     const tbody    = $('#rpt-tabla tbody');
@@ -142,6 +153,7 @@
     async function generar() {
         const desde = inpDesde.value;
         const hasta = inpHasta.value;
+        const agrupacion = selAgrup ? selAgrup.value : 'dia';
 
         if (!desde || !hasta) {
             alert('Selecciona las fechas Desde y Hasta.');
@@ -179,8 +191,9 @@
 
             if (data.rows && data.rows.length) {
                 btnPdf.disabled = false;
-                btnPdf.dataset.desde = desde;
-                btnPdf.dataset.hasta = hasta;
+                btnPdf.dataset.desde      = desde;
+                btnPdf.dataset.hasta      = hasta;
+                btnPdf.dataset.agrupacion = agrupacion;
             }
         } catch (e) {
             console.error(e);
@@ -222,15 +235,17 @@
     }
 
     function exportarPdf() {
-        const desde = btnPdf.dataset.desde;
-        const hasta = btnPdf.dataset.hasta;
+        const desde      = btnPdf.dataset.desde;
+        const hasta      = btnPdf.dataset.hasta;
+        const agrupacion = btnPdf.dataset.agrupacion || 'dia';
+
         if (!desde || !hasta) return;
 
-        const params = new URLSearchParams({ desde, hasta });
+        const params = new URLSearchParams({ desde, hasta, agrupacion });
         window.open(`${rutaPdf}?${params.toString()}`, '_blank');
     }
 
-    // Reporte diario: desde = hasta = fecha
+    // Reporte diario automático (sin agrupación especial)
     window.descargarDiario = function (fecha) {
         const params = new URLSearchParams({
             desde: fecha,
@@ -239,7 +254,6 @@
         window.open(`${rutaPdf}?${params.toString()}`, '_blank');
     };
 
-    // Eventos
     btnGen.addEventListener('click', generar);
     btnPdf.addEventListener('click', exportarPdf);
 

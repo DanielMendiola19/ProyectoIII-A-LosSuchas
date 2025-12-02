@@ -104,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
         Route::get('/reportes',      [ReporteVentasController::class, 'index'])->name('reportes.index');
         Route::get('/reportes/data', [ReporteVentasController::class, 'data'])->name('reportes.data');
-        Route::get('/reportes/pdf',  [ReporteVentasController::class, 'exportPdf'])->name('reportes.pdf');
+        
     });
 
     // =========================
@@ -136,7 +136,22 @@ Route::middleware(['auth'])->group(function () {
     // =========================
     // Reportes
     // =========================
+// =========================
+// Gestión de Usuarios (solo Admin)
+// =========================
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/usuarios',           [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{id}',      [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{id}',   [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+    
+});
 
+// Usuarios eliminados
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/usuarios/eliminados', [UsuarioController::class, 'eliminados'])->name('usuarios.eliminados');
+    Route::post('/usuarios/{id}/restaurar', [UsuarioController::class, 'restaurar'])->name('usuarios.restaurar');
+});
 
 // =========================
 // Gestión de Usuarios (solo Admin)
@@ -155,3 +170,4 @@ Route::middleware(['auth', 'role:Administrador'])->group(function () {
     Route::post('/usuarios/{id}/restaurar', [UsuarioController::class, 'restaurar'])->name('usuarios.restaurar');
 });
 
+Route::get('/reportes/pdf',  [ReporteVentasController::class, 'exportPdf'])->name('reportes.pdf');

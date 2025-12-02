@@ -146,13 +146,12 @@
     const fields = ['nombre', 'apellido', 'rol_id', 'correo', 'password'];
 
 
-        const correoInput = document.getElementById('correo');
+    const correoInput = document.getElementById('correo');
     const passwordInput = document.getElementById('password');
 
-    // Evitar espacios al inicio y al final
     [correoInput, passwordInput].forEach(input => {
       input.addEventListener('input', () => {
-        input.value = input.value.replace(/^\s+|\s+$/g, ''); // elimina espacios al inicio y final
+        input.value = input.value.replace(/^\s+|\s+$/g, ''); 
       });
     });
 
