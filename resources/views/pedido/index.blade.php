@@ -14,28 +14,41 @@
     <!-- Productos divididos por categoría -->
     @foreach ($productos->groupBy('categoria.nombre') as $categoriaNombre => $productosCategoria)
         <h2 class="categoria-titulo">{{ $categoriaNombre }}</h2>
+
         <div class="products-grid">
             @foreach ($productosCategoria as $producto)
                 @if($producto->stock > 0)
-                <div class="product-card" 
-                     data-id="{{ $producto->id }}" 
-                     data-nombre="{{ $producto->nombre }}" 
-                     data-precio="{{ $producto->precio }}"
-                     data-imagen="{{ asset('storage/' . $producto->imagen) }}"
-                     data-stock="{{ $producto->stock }}">
-                    
-                    <div class="card h-100">
-                        <img src="{{ asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" class="card-img-top">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">{{ $producto->nombre }}</h5>
-                            <p class="card-text">Bs {{ number_format($producto->precio, 2) }}</p>
-                            <p class="card-text stock-info">Stock: {{ $producto->stock }}</p>
+                    @php
+                        // Verifica si existe una imagen válida en storage
+                        $rutaImagen = $producto->imagen ? 'storage/' . $producto->imagen : null;
+                        $imagenValida = $rutaImagen && file_exists(public_path($rutaImagen));
+                        $imagenFinal = $imagenValida ? asset($rutaImagen) : asset('img/defecto.png');
+                    @endphp
+
+                    <div class="product-card" 
+                         data-id="{{ $producto->id }}" 
+                         data-nombre="{{ $producto->nombre }}" 
+                         data-precio="{{ $producto->precio }}"
+                         data-imagen="{{ $imagenFinal }}"
+                         data-stock="{{ $producto->stock }}">
+                        
+                        <div class="card h-100">
+                            <img src="{{ $imagenFinal }}" 
+                                 alt="{{ $producto->nombre ?? 'Producto sin nombre' }}" 
+                                 class="card-img-top"
+                                 onerror="this.onerror=null; this.src='{{ asset('img/defecto.png') }}';">
+                            
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ $producto->nombre }}</h5>
+                                <p class="card-text">Bs {{ number_format($producto->precio, 2) }}</p>
+                                <p class="card-text stock-info">Stock: {{ $producto->stock }}</p>
+                            </div>
+
+                            <button type="button" class="btn-agregar">
+                                <i class="fas fa-cart-plus"></i> Agregar
+                            </button>
                         </div>
-                        <button type="button" class="btn-agregar">
-                            <i class="fas fa-cart-plus"></i> Agregar
-                        </button>
                     </div>
-                </div>
                 @endif
             @endforeach
         </div>
@@ -64,19 +77,27 @@
 </div>
 
 <!-- Modal de selección de mesa -->
-<div id="modalMesa" class="modal"> <!-- Cambié de modalMesas a modalMesa -->
+<!-- Modal de selección de mesa -->
+<div id="modalMesa" class="modal">
     <div class="modal-content">
         <h3><i class="fas fa-chair"></i> Seleccione una mesa</h3>
 
         <div id="listaMesas" class="mesas-grid">
-            @foreach ($mesas as $mesa)
-                <div class="mesa-item {{ $mesa->estado === 'ocupada' ? 'ocupada' : 'disponible' }}"
-                     data-id="{{ $mesa->id }}"
-                     data-estado="{{ $mesa->estado }}">
-                    <p>Mesa {{ $mesa->numero_mesa }}</p>
-                    <small>Capacidad: {{ $mesa->capacidad }}</small>
+            @if($mesas->count() > 0)
+                @foreach ($mesas as $mesa)
+                    <div class="mesa-item {{ $mesa->estado === 'ocupada' ? 'ocupada' : 'disponible' }}"
+                         data-id="{{ $mesa->id }}"
+                         data-estado="{{ $mesa->estado }}">
+                        <p>Mesa {{ $mesa->numero_mesa }}</p>
+                        <small>Capacidad: {{ $mesa->capacidad }}</small>
+                    </div>
+                @endforeach
+            @else
+                <div class="carrito-vacio" style="grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--rojo-peligro);"></i>
+                    <p>No hay mesas disponibles en este momento</p>
                 </div>
-            @endforeach
+            @endif
         </div>
 
         <div class="modal-actions">

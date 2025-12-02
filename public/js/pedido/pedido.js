@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ACTUALIZAR CARRITO ---
+        // --- ACTUALIZAR CARRITO ---
     function actualizarCarrito() {
         listaCarrito.innerHTML = '';
         let total = 0;
@@ -74,6 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="fas fa-shopping-cart"></i>
                     <p>Tu carrito está vacío</p>
                 </div>`;
+            
+            // 🔒 Desactivar botón siguiente cuando el carrito está vacío
+            btnSiguiente.disabled = true;
+            btnSiguiente.classList.add('disabled');
         } else {
             carrito.forEach((p, i) => {
                 total += p.precio * p.cantidad;
@@ -100,11 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`;
                 listaCarrito.appendChild(item);
             });
+
+            // ✅ Activar botón siguiente solo si hay productos
+            btnSiguiente.disabled = false;
+            btnSiguiente.classList.remove('disabled');
         }
 
         totalSpan.textContent = total.toFixed(2);
         contadorCarrito.textContent = carrito.reduce((a, b) => a + b.cantidad, 0);
     }
+
 
     // --- CONTROL DE CANTIDAD Y ELIMINAR ---
     listaCarrito.addEventListener('click', (e) => {
@@ -140,12 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarNotificacion('🛒 Carrito vacío', 'info');
             return;
         }
+        const mesasDisponibles = document.querySelectorAll('.mesa-item.disponible');
+        if (mesasDisponibles.length === 0) {
+            mostrarNotificacion('❌ No hay mesas disponibles en este momento', 'error');
+            return;
+        }
+        
         abrirModal(modalCarrito);
     });
 
     btnCerrarCarrito.addEventListener('click', () => cerrarModal(modalCarrito));
 
     btnSiguiente.addEventListener('click', () => {
+        // Verificar si hay mesas disponibles antes de continuar
+        const mesasDisponibles = document.querySelectorAll('.mesa-item.disponible');
+        if (mesasDisponibles.length === 0) {
+            mostrarNotificacion('❌ No hay mesas disponibles en este momento', 'error');
+            cerrarModal(modalCarrito);
+            return;
+        }
+        
         cerrarModal(modalCarrito);
         abrirModal(modalMesa);
     });

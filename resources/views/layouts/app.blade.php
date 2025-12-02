@@ -13,7 +13,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&family=Montserrat&display=swap" rel="stylesheet">
     <!-- Font Awesome para íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin para mostrar etiquetas dentro de las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
     <style>
         :root {
             --negro-carbon: #0D0D0D;
@@ -548,8 +552,8 @@
                 <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
                 <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
                 <a href="{{ route('mesas.index') }}"><i class="fas fa-chair me-2"></i> Mesas</a>
-                <a href="#"><i class="fas fa-users me-2"></i> Usuarios</a>
-                <a href="#"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+                <a href="{{ route('usuarios.index') }}"><i class="fas fa-users me-2"></i> Usuarios</a>
+                <a href="{{ route('reportes.index') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
                 <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info"></i> Informacion</a>
             </div>
             <hr>
@@ -589,6 +593,13 @@
                 <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
                     {{ Auth::user()->correo }}
                 </p>
+                <form method="GET" action="{{ route('perfil.index') }}" style="margin-bottom: 12px">
+                    @csrf
+                    <button type="submit" 
+                        style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                        Ver Perfil
+                    </button>
+                </form>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -660,6 +671,12 @@
                 }
             });
         });
+
+        window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+            window.location.reload(); // recarga la página si venimos de historial
+        }
+    });
     </script>
 
     @stack('scripts')

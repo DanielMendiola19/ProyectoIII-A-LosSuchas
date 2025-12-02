@@ -13,11 +13,17 @@
             @forelse ($categoria->productos as $producto)
                 <div class="product-card">
                     <div class="card h-100">
-                        @if($producto->imagen)
-                            <img src="{{ asset('storage/'.$producto->imagen) }}" class="card-img-top" alt="{{ $producto->nombre }}">
+                        @php
+                            $imagenPath = $producto->imagen ? 'storage/' . $producto->imagen : null;
+                            $imagenExiste = $imagenPath && file_exists(public_path($imagenPath));
+                        @endphp
+
+                        @if ($imagenExiste)
+                            <img src="{{ asset($imagenPath) }}" class="card-img-top" alt="{{ $producto->nombre }}">
                         @else
-                            <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Imagen no disponible">
+                            <img src="{{ asset('img/defecto.png') }}" class="card-img-top" alt="Imagen no disponible">
                         @endif
+
                         <div class="card-body text-center">
                             <h5 class="card-title">{{ $producto->nombre }}</h5>
                             <p class="card-text">{{ $producto->descripcion }}</p>

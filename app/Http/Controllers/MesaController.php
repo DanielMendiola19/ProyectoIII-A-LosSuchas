@@ -13,8 +13,10 @@ class MesaController extends Controller
         $mesas = Mesa::all();
         $ocupadas = Mesa::where('estado', 'ocupada')->count();
         $disponibles = Mesa::where('estado', 'disponible')->count();
+        $mantenimiento = Mesa::where('estado', 'mantenimiento')->count();
 
-        return view('mesas.index', compact('mesas', 'ocupadas', 'disponibles'));
+        return view('mesas.index', compact('mesas', 'ocupadas', 'disponibles', 'mantenimiento'));
+
     }
 
     // Crear nueva mesa
@@ -23,7 +25,7 @@ class MesaController extends Controller
         $request->validate([
             'numero_mesa' => 'required|integer|unique:mesas,numero_mesa',
             'capacidad' => 'required|integer|min:1|max:6',
-            'estado' => 'required|in:ocupada,disponible',
+            'estado' => 'required|in:ocupada,disponible,mantenimiento',
             'pos_x' => 'nullable|integer',
             'pos_y' => 'nullable|integer',
         ]);
@@ -49,7 +51,7 @@ class MesaController extends Controller
         $request->validate([
             'numero_mesa' => 'required|integer|unique:mesas,numero_mesa,' . $mesa->id,
             'capacidad' => 'required|integer|min:1|max:6',
-            'estado' => 'required|in:ocupada,disponible',
+            'estado' => 'required|in:ocupada,disponible,mantenimiento',
             'pos_x' => 'nullable|integer',
             'pos_y' => 'nullable|integer',
         ]);
@@ -108,5 +110,33 @@ class MesaController extends Controller
         return response()->json(['success' => true]);
     }
 
+// Poner/quitar mesa en mantenimiento
+public function mantenimiento($id)
+{
+    try {
+        $mesa = Mesa::findOrFail($id);
+        
+        // Alternar entre mantenimiento y disponible
+        $nuevoEstado = $mesa->estado === 'mantenimiento' ? 'disponible' : 'mantenimiento';
+        
+        $mesa->update(['estado' => $nuevoEstado]);
+
+        $mensaje = $nuevoEstado === 'mantenimiento' 
+            ? 'Mesa puesta en mantenimiento correctamente' 
+            : 'Mesa quitada del mantenimiento correctamente';
+
+        return response()->json([
+            'success' => true,
+            'message' => $mensaje,
+            'mesa' => $mesa
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar la mesa: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 }

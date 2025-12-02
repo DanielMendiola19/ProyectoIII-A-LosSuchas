@@ -48,30 +48,34 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && pop && !pop.classList.contains('hidden')) closeConfirm();
   });
+/* =========================
+ *  Contadores + / - (VERSIÓN LIBRE)
+ * ========================= */
+$$('.contador').forEach(cont => {
+  const input = $('.input-cant', cont);
+  if (!input) return;
 
-  /* =========================
-   *  Contadores + / -
-   * ========================= */
-  $$('.contador').forEach(cont => {
-    const input = $('.input-cant', cont);
-    if (!input) return;
-
-    $('.mas', cont)?.addEventListener('click', () => {
-      const maxAdd = parseInt(input.dataset.maxAdd);
-      const v = parseInt(input.value || '1');
-      input.value = isNaN(maxAdd) ? (v + 1) : Math.min(v + 1, Math.max(1, maxAdd));
-    });
-
-    $('.menos', cont)?.addEventListener('click', () => {
-      const v = parseInt(input.value || '1');
-      input.value = Math.max(1, v - 1);
-    });
-
-    input.addEventListener('input', () => {
-      let v = parseInt(input.value || '1');
-      if (isNaN(v) || v < 1) input.value = 1;
-    });
+  // Botón + : incrementa libremente
+  $('.mas', cont)?.addEventListener('click', () => {
+    const v = parseInt(input.value || '1');
+    input.value = v + 1;
   });
+
+  // Botón - : decrementa libremente (mínimo 1)
+  $('.menos', cont)?.addEventListener('click', () => {
+    let v = parseInt(input.value || '1');
+    if (v > 1) input.value = v - 1;
+  });
+
+  // Input: permite escribir libremente (mínimo 1)
+  input.addEventListener('input', () => {
+    let v = parseInt(input.value || '1');
+    if (isNaN(v) || v < 1) v = 1;
+    input.value = v;
+  });
+});
+
+
 
 
   $$('.js-accion').forEach(btn => {

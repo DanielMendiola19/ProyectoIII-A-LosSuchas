@@ -31,6 +31,7 @@
     <div class="stats">
         <span class="disponibles">Disponibles: {{ $disponibles }}</span>
         <span class="ocupadas">Ocupadas: {{ $ocupadas }}</span>
+        <span class="mantenimiento">En mantenimiento: {{ $mantenimiento }}</span>
     </div>
 
     <!-- 🔹 FORMULARIO CREAR -->
@@ -38,13 +39,13 @@
         @csrf
         <div>
             <label for="numero_mesa">Número de Mesa:</label>
-            <input type="text" id="numero_mesa" name="numero_mesa" required>
+            <input type="text" id="numero_mesa" name="numero_mesa" required placeholder="Ejemplo: 1, 2, 3...">
             <span id="errorNumero" class="input-error"></span>
         </div>
 
         <div>
             <label for="capacidad">Capacidad:</label>
-            <input type="number" id="capacidad" name="capacidad" required min="2" max="6">
+            <input type="number" id="capacidad" name="capacidad" required min="2" max="6" placeholder="2-6 personas">
             <span id="errorCapacidad" class="input-error"></span>
         </div>
 
@@ -53,6 +54,7 @@
             <select name="estado" required>
                 <option value="disponible">Disponible</option>
                 <option value="ocupada">Ocupada</option>
+                <option value="mantenimiento">Mantenimiento</option>
             </select>
         </div>
 
@@ -74,15 +76,20 @@
                 <tr>
                     <td>{{ $mesa->numero_mesa }}</td>
                     <td>{{ $mesa->capacidad }}</td>
-                    <td class="{{ $mesa->estado === 'ocupada' ? 'estado-ocupada' : 'estado-disponible' }}">
+                    <td class="
+                        {{ $mesa->estado === 'ocupada' ? 'estado-ocupada' : '' }}
+                        {{ $mesa->estado === 'disponible' ? 'estado-disponible' : '' }}
+                        {{ $mesa->estado === 'mantenimiento' ? 'estado-mantenimiento' : '' }}
+                    ">
                         {{ ucfirst($mesa->estado) }}
                     </td>
+                    <!-- En la tabla, actualiza el botón de mantenimiento -->
                     <td>
                         <button class="btn btn-editar" data-mesa='@json($mesa)'>Editar</button>
-                        <form action="{{ route('mesas.destroy', $mesa) }}" method="POST" style="display:inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-eliminar">Eliminar</button>
-                        </form>
+                        <button class="btn btn-mantenimiento" data-id="{{ $mesa->id }}">
+                            <i class="fas fa-tools"></i> 
+                            {{ $mesa->estado === 'mantenimiento' ? 'Quitar Mantenimiento' : 'Poner Mantenimiento' }}
+                        </button>
                     </td>
                 </tr>
             @endforeach
@@ -112,6 +119,7 @@
                 <select id="edit_estado" name="estado" required>
                     <option value="disponible">Disponible</option>
                     <option value="ocupada">Ocupada</option>
+                    <option value="mantenimiento">Mantenimiento</option>
                 </select>
             </div>
 

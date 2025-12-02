@@ -1,0 +1,384 @@
+/* 🎨 Paleta de colores del sistema */
+:root {
+    --negro-carbon: #0D0D0D;
+    --dorado: #E6B325;
+    --blanco-hueso: #FAF9F6;
+    --gris-suave: #C0C0C0;
+    --cafe-espresso: #4B2E2E;
+    --dorado-hover: #c9981f;
+    --verde-exito: #5cb85c;
+    --azul-info: #5bc0de;
+    --rojo-peligro: #dc3545;
+}
+
+/* Body y contenedor */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--cafe-espresso) 0%, var(--negro-carbon) 100%);
+    color: var(--blanco-hueso);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.perfil-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.perfil-container h1 {
+    text-align: center;
+    color: var(--dorado);
+    font-size: 2.8rem;
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px rgba(230,179,37,0.5);
+}
+
+/* Card de perfil */
+.perfil-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(230,179,37,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.perfil-info p {
+    font-size: 1.1rem;
+    margin: 12px 0;
+}
+
+.perfil-info strong {
+    color: var(--dorado);
+}
+
+/* Pedidos recientes */
+.perfil-pedidos {
+    margin-top: 25px;
+}
+
+.perfil-pedidos h3 {
+    color: var(--dorado);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.perfil-pedidos ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.perfil-pedidos li {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(230,179,37,0.2);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.perfil-pedidos li:hover {
+    box-shadow: 0 5px 15px rgba(230,179,37,0.3);
+    transform: translateY(-2px);
+}
+
+/* Formulario de cambio de contraseña */
+#form-cambiar-password {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#form-cambiar-password .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#form-cambiar-password label {
+    color: var(--dorado);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+#form-cambiar-password input {
+    padding: 12px 40px 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(230,179,37,0.3);
+    background: rgba(255,255,255,0.05);
+    color: var(--blanco-hueso);
+    font-size: 1rem;
+    transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#form-cambiar-password input:focus {
+    outline: none;
+    border-color: var(--dorado);
+    box-shadow: 0 0 0 2px rgba(230,179,37,0.3);
+    background: rgba(255,255,255,0.1);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--gris-suave);
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: var(--dorado);
+}
+
+/* Botón de guardar */
+#form-cambiar-password .btn-principal {
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-hover));
+    color: var(--negro-carbon);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#form-cambiar-password .btn-principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230,179,37,0.4);
+}
+
+/* Mensajes de error */
+.error-message {
+    font-size: 0.9rem;
+    color: var(--rojo-peligro);
+}
+
+/* Indicadores de contraseña */
+.password-requirements {
+    display: none;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.password-requirements span {
+    display: block;
+    margin-bottom: 2px;
+    transition: color 0.3s;
+}
+
+.password-requirements .invalid {
+    color: var(--rojo-peligro);
+}
+
+.password-requirements .valid {
+    color: var(--verde-exito);
+}
+
+.password-match {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.password-match.invalid {
+    color: var(--rojo-peligro);
+}
+
+.password-match.valid {
+    color: var(--verde-exito);
+}
+
+/* ========== ESTILOS PARA NOTIFICACIONES ========== */
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.notification {
+    background: rgba(75, 46, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border-left: 4px solid var(--dorado);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(400px);
+    opacity: 0;
+}
+
+.notification.success {
+    border-left-color: var(--verde-exito);
+}
+
+.notification.error {
+    border-left-color: var(--rojo-peligro);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 15px;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification.success .notification-icon {
+    color: var(--verde-exito);
+}
+
+.notification.error .notification-icon {
+    color: var(--rojo-peligro);
+}
+
+.notification-message {
+    flex: 1;
+    color: var(--blanco-hueso);
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--gris-suave);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    color: var(--blanco-hueso);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Efecto de progreso (opcional) */
+.notification::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    animation: progress 5s linear forwards;
+}
+
+.notification.success::after {
+    color: var(--verde-exito);
+}
+
+.notification.error::after {
+    color: var(--rojo-peligro);
+}
+
+@keyframes progress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .perfil-container {
+        padding: 20px 15px;
+    }
+    
+    .perfil-container h1 {
+        font-size: 2.2rem;
+    }
+    
+    .perfil-card {
+        padding: 20px;
+    }
+    
+    #form-cambiar-password {
+        gap: 15px;
+    }
+
+    #form-cambiar-password label {
+        font-size: 1rem;
+    }
+
+    #form-cambiar-password input {
+        font-size: 0.95rem;
+        padding: 10px 35px 10px 12px;
+    }
+
+    #form-cambiar-password .btn-principal {
+        font-size: 0.95rem;
+        padding: 10px 15px;
+    }
+
+    /* Notificaciones responsive */
+    #notifications-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification-content {
+        padding: 12px 15px;
+        gap: 12px;
+    }
+    
+    .notification-icon {
+        font-size: 1.3rem;
+    }
+    
+    .notification-message {
+        font-size: 0.9rem;
+    }
+    
+    .notification-close {
+        font-size: 1.2rem;
+        width: 25px;
+        height: 25px;
+    }
+}

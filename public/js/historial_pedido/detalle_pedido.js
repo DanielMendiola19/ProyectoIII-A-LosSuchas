@@ -1,4 +1,4 @@
-// ===================== Sistema de notificaciones mejorado =====================
+// ===================== Sistema de notificaciones MEJORADO =====================
 class NotificacionManager {
     constructor() {
         this.notificacionQueue = [];
@@ -22,7 +22,7 @@ class NotificacionManager {
         }
     }
 
-    mostrar(mensaje, tipo = 'info', duracion = 3000) {
+    mostrar(mensaje, tipo = 'info', duracion = 1800) { // 🔹 Reducido a 1.8 segundos
         const notificacion = { mensaje, tipo, duracion, id: Date.now() + Math.random() };
         this.notificacionQueue.push(notificacion);
         this.procesarCola();
@@ -47,15 +47,24 @@ class NotificacionManager {
         const container = document.getElementById('notificacion-pedido-container') || document.body;
         container.appendChild(notificacion);
 
-        setTimeout(() => notificacion.classList.add('show'), 10);
+        // 🔹 ANIMACIÓN MÁS RÁPIDA
+        notificacion.style.opacity = '0';
+        notificacion.style.transform = 'translateX(100%)';
+        
+        setTimeout(() => {
+            notificacion.style.transition = 'all 0.2s ease'; // 🔹 Más rápido
+            notificacion.style.opacity = '1';
+            notificacion.style.transform = 'translateX(0)';
+        }, 10);
 
         setTimeout(() => {
-            notificacion.classList.remove('show');
+            notificacion.style.opacity = '0';
+            notificacion.style.transform = 'translateX(100%)';
             setTimeout(() => {
                 if (notificacion.parentNode) notificacion.parentNode.removeChild(notificacion);
                 this.isShowing = false;
                 this.procesarCola();
-            }, 400);
+            }, 200); // 🔹 Más rápido
         }, duracion);
     }
 
@@ -114,6 +123,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const formsEstado = document.querySelectorAll('.form-estado');
     formsEstado.forEach(form => {
         const select = form.querySelector('select[name="estado"]');
+        const btnConfirmar = form.querySelector('.btn-confirmar');
+        
         actualizarColorFila(select); // Color inicial
 
         form.addEventListener('submit', async function(e) {
@@ -122,7 +133,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const url = this.action;
             const token = this.querySelector('input[name="_token"]').value;
 
-            notificaciones.mostrar('🔄 Actualizando estado...', 'info');
+            // 🔹 DESHABILITAR BOTÓN TEMPORALMENTE PARA EVITAR DOBLE CLIC
+            btnConfirmar.disabled = true;
+            btnConfirmar.innerHTML = '<i class="bi bi-hourglass-split"></i> Procesando...';
 
             try {
                 const response = await fetch(url, {
@@ -138,14 +151,22 @@ document.addEventListener("DOMContentLoaded", function() {
                 const data = await response.json();
 
                 if (data.success) {
-                    notificaciones.mostrar('✅ Estado actualizado correctamente', 'exito');
+                    // 🔹 NOTIFICACIÓN RÁPIDA DE ÉXITO
+                    notificaciones.mostrar(' Estado actualizado correctamente', 'exito', 1500);
                     actualizarColorFila(select);
                 } else {
-                    notificaciones.mostrar(`❌ ${data.error || 'Error al actualizar estado'}`, 'error');
+                    // 🔹 NOTIFICACIÓN RÁPIDA DE ERROR
+                    notificaciones.mostrar(` ${data.error || 'Error al actualizar estado'}`, 'error', 2000);
                 }
             } catch (err) {
                 console.error(err);
-                notificaciones.mostrar('❌ Error de conexión al servidor', 'error');
+                notificaciones.mostrar(' Error de conexión al servidor', 'error', 2000);
+            } finally {
+                // 🔹 REHABILITAR BOTÓN DESPUÉS DE 800ms (más rápido)
+                setTimeout(() => {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '<i class="bi bi-check-circle"></i> Confirmar';
+                }, 800);
             }
         });
 

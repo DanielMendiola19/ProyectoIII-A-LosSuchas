@@ -145,6 +145,21 @@
     const form = document.getElementById('signupForm');
     const fields = ['nombre', 'apellido', 'rol_id', 'correo', 'password'];
 
+
+    const correoInput = document.getElementById('correo');
+    const passwordInput = document.getElementById('password');
+
+    [correoInput, passwordInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/^\s+|\s+$/g, ''); 
+      });
+    });
+
+    // Si también quieres bloquear espacios dentro de la contraseña:
+    passwordInput.addEventListener('input', () => {
+      passwordInput.value = passwordInput.value.replace(/\s/g, ''); // elimina todos los espacios
+    });
+
     const pwInput = document.getElementById('password');
     const pwRequirements = {
       length: document.getElementById('pw-length'),

@@ -10,6 +10,12 @@ use App\Http\Controllers\MesaController;
 use App\Http\Controllers\HistorialPedidoController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReporteVentasController;
+
+use App\Http\Controllers\UsuarioController;
+
 
 // =========================
 // RUTAS PÚBLICAS
@@ -17,6 +23,14 @@ use App\Http\Controllers\InventarioController;
 
 // Splash page
 Route::get('/', fn() => view('splash'))->name('splash');
+
+
+Route::group(['middleware' => ['auth', 'nocache']], function() {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    // otras rutas protegidas
+});
+
 
 // Login / Signup
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -30,6 +44,10 @@ Route::post('/signup/validate', [AuthController::class, 'validateField'])->name(
 // Menu y Dashboard (accesibles sin login)
 Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+
 
 // =========================
 // RECUPERACIÓN DE CONTRASEÑA (pública)
@@ -62,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('productos', ProductoController::class)->except(['show', 'edit', 'create']);
         Route::get('/productos/eliminados', [ProductoController::class, 'eliminados'])->name('productos.eliminados');
         Route::post('/productos/restaurar/{id}', [ProductoController::class, 'restaurar'])->name('productos.restaurar');
+        Route::get('/productos/verificar-nombre', [App\Http\Controllers\ProductoController::class, 'verificarNombre'])->name('productos.verificarNombre');
+
 
         Route::get('/informacion', fn() => view('informacion.index'))->name('informacion.index');
     });
@@ -74,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
         Route::post('/mesas/guardar-posiciones', [MesaController::class, 'guardarPosiciones'])->name('mesas.guardarPosiciones');
         Route::post('/mesas/{id}/actualizar-posicion', [MesaController::class, 'actualizarPosicion']);
+        
+        Route::post('/mesas/mantenimiento/{id}', [MesaController::class, 'mantenimiento'])->name('mesas.mantenimiento');
     });
 
     // =========================
@@ -82,6 +104,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:Administrador,Cajero')->group(function () {
         Route::get('/pedido', [PedidoController::class, 'index'])->name('pedido.index');
         Route::post('/pedido', [PedidoController::class, 'store'])->name('pedido.store');
+        Route::get('/reportes',      [ReporteVentasController::class, 'index'])->name('reportes.index');
+        Route::get('/reportes/data', [ReporteVentasController::class, 'data'])->name('reportes.data');
+        
     });
 
     // =========================
@@ -103,3 +128,31 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/inventario/{producto}/disminuir', [InventarioController::class, 'disminuir'])->name('inventario.disminuir');
     });
 });
+
+Route::middleware(['auth'])->group(function () {
+    // Perfil de usuario
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    Route::post('/perfil/cambiar-password', [PerfilController::class, 'cambiarPassword'])->name('perfil.cambiarPassword');  
+});
+
+    // =========================
+    // Reportes
+    // =========================
+// =========================
+// Gestión de Usuarios (solo Admin)
+// =========================
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/usuarios',           [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{id}',      [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{id}',   [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+    
+});
+
+// Usuarios eliminados
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::get('/usuarios/eliminados', [UsuarioController::class, 'eliminados'])->name('usuarios.eliminados');
+    Route::post('/usuarios/{id}/restaurar', [UsuarioController::class, 'restaurar'])->name('usuarios.restaurar');
+});
+
+Route::get('/reportes/pdf',  [ReporteVentasController::class, 'exportPdf'])->name('reportes.pdf');

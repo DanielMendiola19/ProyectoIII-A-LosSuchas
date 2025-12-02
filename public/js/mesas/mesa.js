@@ -10,58 +10,360 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorEditarCapacidad = document.getElementById('errorEditarCapacidad');
     const areaMesas = document.getElementById('area-mesas');
 
-    // ✅ Validar solo números en número de mesa
-    numeroMesa.addEventListener('input', () => {
-        numeroMesa.value = numeroMesa.value.replace(/\D/g, '');
+    // ✅ Botón de mantenimiento corregido - CON ESTILO PERSONALIZADO
+    document.querySelectorAll('.btn-mantenimiento').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const mesaElement = document.querySelector(`.mesa-item[data-id="${id}"]`);
+            const estadoActual = mesaElement?.classList.contains('mantenimiento');
+            
+            const accion = estadoActual ? 'quitar del mantenimiento' : 'poner en mantenimiento';
+            
+            // Usar nuestra confirmación personalizada en lugar de confirm() nativo
+            const confirmado = await mostrarConfirmacion(
+                `¿Estás seguro de que deseas ${accion} esta mesa?`, 
+                'mantenimiento'
+            );
+            
+            if (!confirmado) return;
+
+            try {
+                const res = await fetch(`/mesas/mantenimiento/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    mostrarNotificacion(data.message, 'mantenimiento');
+                    setTimeout(() => window.location.reload(), 1200);
+                } else {
+                    mostrarNotificacion(data.message || 'Error al actualizar la mesa', 'error');
+                }
+            } catch (err) {
+                console.error('Error completo:', err);
+                mostrarNotificacion('Error de conexión: ' + err.message, 'error');
+            }
+        });
     });
 
-    // ✅ Validar número de mesa duplicado en tiempo real
-    numeroMesa.addEventListener('keyup', async () => {
-        const numero = numeroMesa.value.trim();
-        if (numero === '') {
+    // ✅ Función personalizada para confirmaciones con estilo
+    function mostrarConfirmacion(mensaje, tipo = 'general') {
+        return new Promise((resolve) => {
+            // Crear overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-alert-overlay';
+            overlay.style.display = 'flex';
+
+            // Crear caja de confirmación
+            const alertBox = document.createElement('div');
+            alertBox.className = `custom-alert-box ${tipo === 'mantenimiento' ? 'custom-alert-mantenimiento' : ''}`;
+
+            // Contenido HTML
+            alertBox.innerHTML = `
+                <div class="custom-alert-title">
+                    <i class="fas fa-exclamation-triangle"></i> Confirmación
+                </div>
+                <div class="custom-alert-message">${mensaje}</div>
+                <div class="custom-alert-buttons">
+                    <button class="custom-alert-btn custom-alert-confirm" id="customConfirmYes">
+                        <i class="fas fa-check"></i> Aceptar
+                    </button>
+                    <button class="custom-alert-btn custom-alert-cancel" id="customConfirmNo">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            `;
+
+            overlay.appendChild(alertBox);
+            document.body.appendChild(overlay);
+
+            // Event listeners
+            document.getElementById('customConfirmYes').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            });
+
+            document.getElementById('customConfirmNo').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                resolve(false);
+            });
+
+            // Cerrar al hacer clic fuera
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                    resolve(false);
+                }
+            });
+
+            // Cerrar con ESC
+            const handleEsc = (e) => {
+                if (e.key === 'Escape') {
+                    document.removeEventListener('keydown', handleEsc);
+                    document.body.removeChild(overlay);
+                    resolve(false);
+                }
+            };
+            document.addEventListener('keydown', handleEsc);
+        });
+    }
+
+    // ✅ Validar solo números en número de mesa - MEJORADA
+    numeroMesa.addEventListener('input', (e) => {
+        // Remover cualquier caracter que no sea número
+        let valor = e.target.value.replace(/[^\d]/g, '');
+        
+        // Remover ceros a la izquierda
+        valor = valor.replace(/^0+/, '');
+        
+        // Limitar a 3 dígitos máximo
+        if (valor.length > 3) {
+            valor = valor.slice(0, 3);
+        }
+        
+        e.target.value = valor;
+        
+        // Si el campo está vacío después de la limpieza, mostrar error
+        if (valor === '') {
+            errorNumero.textContent = 'El número de mesa es requerido';
+        } else {
             errorNumero.textContent = '';
+        }
+    });
+
+    // ✅ Validar también en el evento keydown para prevenir entrada de caracteres no numéricos
+    numeroMesa.addEventListener('keydown', (e) => {
+        // Permitir teclas de control (backspace, delete, tab, etc.)
+        if (
+            e.key === 'Backspace' || 
+            e.key === 'Delete' || 
+            e.key === 'Tab' || 
+            e.key === 'ArrowLeft' || 
+            e.key === 'ArrowRight' ||
+            e.key === 'Home' ||
+            e.key === 'End' ||
+            (e.ctrlKey && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x'))
+        ) {
             return;
         }
-        const res = await fetch(`/mesas/verificar/${numero}`);
-        const data = await res.json();
-        errorNumero.textContent = data.existe ? '⚠️ Este número de mesa ya existe' : '';
-    });
-
-    // ✅ Validar capacidad (mínimo 2, máximo 6)
-    capacidad.addEventListener('input', () => {
-        const valor = parseInt(capacidad.value);
-        if (valor < 2) {
-            errorCapacidad.textContent = '⚠️ La capacidad mínima es 2';
-            capacidad.value = 2;
-        } else if (valor > 6) {
-            errorCapacidad.textContent = '⚠️ La capacidad máxima es 6';
-            capacidad.value = 6;
-        } else {
-            errorCapacidad.textContent = '';
+        
+        // Permitir solo números
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+            mostrarNotificacion('Solo se permiten números en el campo de número de mesa', 'error');
         }
     });
 
-    // ✅ Validar capacidad en edición
-    document.getElementById('edit_capacidad').addEventListener('input', (e) => {
-        const valor = parseInt(e.target.value);
-        if (valor < 2) {
-            errorEditarCapacidad.textContent = '⚠️ La capacidad mínima es 2';
+    // ✅ Validar también en el evento paste para limpiar contenido pegado
+    numeroMesa.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
+        const soloNumeros = textoPegado.replace(/[^\d]/g, '');
+        document.execCommand('insertText', false, soloNumeros);
+    });
+
+    // ✅ Validar número de mesa duplicado en tiempo real - MEJORADA
+    numeroMesa.addEventListener('keyup', async () => {
+        const numero = numeroMesa.value.trim();
+        
+        if (numero === '') {
+            errorNumero.textContent = 'El número de mesa es requerido';
+            return;
+        }
+        
+        // Validar que sea un número válido (no 0)
+        if (numero === '0') {
+            errorNumero.textContent = 'El número de mesa no puede ser 0';
+            return;
+        }
+        
+        // Validar que no sea demasiado grande
+        if (parseInt(numero) > 999) {
+            errorNumero.textContent = 'El número de mesa no puede ser mayor a 999';
+            return;
+        }
+        
+        try {
+            const res = await fetch(`/mesas/verificar/${numero}`);
+            const data = await res.json();
+            errorNumero.textContent = data.existe ? 'Este número de mesa ya existe' : '';
+        } catch (error) {
+            console.error('Error al verificar número:', error);
+            errorNumero.textContent = 'Error al verificar disponibilidad';
+        }
+    });
+
+    // ✅ Validar capacidad (mínimo 2, máximo 6) - MEJORADA
+    capacidad.addEventListener('input', (e) => {
+        // Remover cualquier caracter que no sea número
+        let valor = e.target.value.replace(/[^\d]/g, '');
+        
+        // Si está vacío, mostrar error
+        if (valor === '') {
+            errorCapacidad.textContent = 'La capacidad es requerida';
+            e.target.value = '';
+            return;
+        }
+        
+        const numValor = parseInt(valor);
+        
+        if (numValor < 2) {
+            errorCapacidad.textContent = 'La capacidad mínima es 2';
             e.target.value = 2;
-        } else if (valor > 6) {
-            errorEditarCapacidad.textContent = '⚠️ La capacidad máxima es 6';
+        } else if (numValor > 6) {
+            errorCapacidad.textContent = 'La capacidad máxima es 6';
+            e.target.value = 6;
+        } else {
+            errorCapacidad.textContent = '';
+            e.target.value = numValor;
+        }
+    });
+
+    capacidad.addEventListener('keydown', (e) => {
+        // Permitir teclas de control
+        if (
+            e.key === 'Backspace' || 
+            e.key === 'Delete' || 
+            e.key === 'Tab' || 
+            e.key === 'ArrowLeft' || 
+            e.key === 'ArrowRight' ||
+            e.key === 'Home' ||
+            e.key === 'End' ||
+            (e.ctrlKey && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x'))
+        ) {
+            return;
+        }
+        
+        // Permitir solo números
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+            mostrarNotificacion('Solo se permiten números en el campo de capacidad', 'error');
+        }
+    });
+
+    // ✅ Validar capacidad en edición - MEJORADA
+    document.getElementById('edit_capacidad').addEventListener('input', (e) => {
+        // Remover cualquier caracter que no sea número
+        let valor = e.target.value.replace(/[^\d]/g, '');
+        
+        // Si está vacío, mostrar error
+        if (valor === '') {
+            errorEditarCapacidad.textContent = 'La capacidad es requerida';
+            e.target.value = '';
+            return;
+        }
+        
+        const numValor = parseInt(valor);
+        
+        if (numValor < 2) {
+            errorEditarCapacidad.textContent = 'La capacidad mínima es 2';
+            e.target.value = 2;
+        } else if (numValor > 6) {
+            errorEditarCapacidad.textContent = 'La capacidad máxima es 6';
             e.target.value = 6;
         } else {
             errorEditarCapacidad.textContent = '';
+            e.target.value = numValor;
         }
     });
 
-    // ✅ Crear mesa con AJAX
+    document.getElementById('edit_capacidad').addEventListener('keydown', (e) => {
+        // Permitir teclas de control
+        if (
+            e.key === 'Backspace' || 
+            e.key === 'Delete' || 
+            e.key === 'Tab' || 
+            e.key === 'ArrowLeft' || 
+            e.key === 'ArrowRight' ||
+            e.key === 'Home' ||
+            e.key === 'End' ||
+            (e.ctrlKey && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x'))
+        ) {
+            return;
+        }
+        
+        // Permitir solo números
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+            mostrarNotificacion('Solo se permiten números en el campo de capacidad', 'error');
+        }
+    });
+
+    // ✅ Validar solo números en número de mesa (EDITAR) - MEJORADA
+    document.getElementById('edit_numero_mesa').addEventListener('input', (e) => {
+        // Remover cualquier caracter que no sea número
+        let valor = e.target.value.replace(/[^\d]/g, '');
+        
+        // Remover ceros a la izquierda
+        valor = valor.replace(/^0+/, '');
+        
+        // Limitar a 3 dígitos máximo
+        if (valor.length > 3) {
+            valor = valor.slice(0, 3);
+        }
+        
+        e.target.value = valor;
+    });
+
+    document.getElementById('edit_numero_mesa').addEventListener('keydown', (e) => {
+        // Permitir teclas de control (backspace, delete, tab, etc.)
+        if (
+            e.key === 'Backspace' || 
+            e.key === 'Delete' || 
+            e.key === 'Tab' || 
+            e.key === 'ArrowLeft' || 
+            e.key === 'ArrowRight' ||
+            e.key === 'Home' ||
+            e.key === 'End' ||
+            (e.ctrlKey && (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x'))
+        ) {
+            return;
+        }
+        
+        // Permitir solo números
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+            mostrarNotificacion('Solo se permiten números en el campo de número de mesa', 'error');
+        }
+    });
+
+    document.getElementById('edit_numero_mesa').addEventListener('paste', (e) => {
+        e.preventDefault();
+        const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
+        const soloNumeros = textoPegado.replace(/[^\d]/g, '');
+        document.execCommand('insertText', false, soloNumeros);
+    });
+
+    // ✅ Crear mesa con AJAX - MEJORADA
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Validaciones finales antes de enviar
+        const numero = numeroMesa.value.trim();
+        const capacidadVal = capacidad.value.trim();
+        
+        if (numero === '' || numero === '0') {
+            mostrarNotificacion('El número de mesa es requerido y debe ser mayor a 0', 'error');
+            numeroMesa.focus();
+            return;
+        }
+        
+        if (capacidadVal === '' || parseInt(capacidadVal) < 2 || parseInt(capacidadVal) > 6) {
+            mostrarNotificacion('La capacidad debe estar entre 2 y 6', 'error');
+            capacidad.focus();
+            return;
+        }
+        
         if (errorNumero.textContent !== '') {
             mostrarNotificacion('Corrige los errores antes de continuar', 'error');
             return;
         }
+        
         const formData = new FormData(form);
         try {
             const response = await fetch(form.action, {
@@ -182,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-        // ✅ Botón para guardar todas las posiciones
+    // ✅ Botón para guardar todas las posiciones
     const btnGuardar = document.getElementById('guardar-posiciones');
     if (btnGuardar) {
         btnGuardar.addEventListener('click', async () => {
@@ -203,15 +505,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    mostrarNotificacion('✅ Posiciones guardadas correctamente', 'exito');
+                    mostrarNotificacion('Posiciones guardadas correctamente', 'exito');
                 } else {
-                    mostrarNotificacion('❌ Error al guardar las posiciones', 'error');
-                }
+                    mostrarNotificacion('Error al guardar las posiciones', 'error');
+                }   
             } catch (err) {
                 console.error('Error:', err);
-                mostrarNotificacion('⚠️ Error de conexión al guardar', 'error');
+                mostrarNotificacion('Error de conexión al guardar', 'error');
             }
         });
     }
-   
 });
