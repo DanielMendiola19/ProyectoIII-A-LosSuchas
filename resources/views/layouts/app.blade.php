@@ -529,105 +529,126 @@
     @stack('styles')
 </head>
 <body>
-    <!-- Botón menú móvil -->
+    <!-- Botón menú móvil solo si hay sesión -->
+    @auth
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
+    @endauth
 
     <!-- Overlay para móviles -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    @auth
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    @endauth
 
     <!-- SIDEBAR -->
+    @auth
     <div class="sidebar" id="sidebar">
         <div class="logo-container">
             <img src="{{ asset('images/logo.png') }}" alt="Logo Coffeeology" class="sidebar-logo">
         </div>
 
         <h2>Coffeeology</h2>
-            <div class="sidebar-nav">
-                <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-                <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
-                <a href="{{ route('inventario.index') }}"><i class="fas fa-boxes me-2"></i> Inventario</a>
-                <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menu</a>
-                <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
-                <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
-                <a href="{{ route('mesas.index') }}"><i class="fas fa-chair me-2"></i> Mesas</a>
-                <a href="{{ route('usuarios.index') }}"><i class="fas fa-users me-2"></i> Usuarios</a>
-                <a href="{{ route('reportes.index') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
-                <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info"></i> Informacion</a>
-            </div>
-            <hr>
+        <div class="sidebar-nav">
+            <a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
 
-            {{-- 🔑 Auth Links --}}
-        <!-- Icono de persona siempre visible -->
+            {{-- ADMIN → Productos --}}
+            @if(auth()->user()->rol->nombre === 'Administrador')
+                <a href="{{ route('productos.index') }}"><i class="fas fa-coffee me-2"></i> Productos</a>
+            @endif
+
+            {{-- ADMIN + COCINERO → Inventario --}}
+            @if(in_array(auth()->user()->rol->nombre, ['Administrador','Cocinero']))
+                <a href="{{ route('inventario.index') }}"><i class="fas fa-boxes me-2"></i> Inventario</a>
+            @endif
+
+            {{-- TODOS → Menú --}}
+            <a href="{{ route('menu.index') }}"><i class="fas fa-store me-2"></i> Menú</a>
+
+            {{-- ADMIN + CAJERO → Pedidos --}}
+            @if(in_array(auth()->user()->rol->nombre, ['Administrador','Cajero']))
+                <a href="{{ route('pedido.index') }}"><i class="fas fa-shopping-bag me-2"></i> Pedido</a>
+            @endif
+
+            {{-- TODOS → Historial Pedidos --}}
+            @if(in_array(auth()->user()->rol->nombre, ['Administrador','Cajero','Cocinero','Mesero']))
+                <a href="{{ route('pedidos.historial') }}"><i class="fas fa-clock-rotate-left me-2"></i> Historial Pedidos</a>
+            @endif
+
+            {{-- ADMIN + Mesero → Mesas --}}
+            @if(in_array(auth()->user()->rol->nombre, ['Administrador','Mesero']))
+                <a href="{{ route('mesas.index') }}"><i class="fas fa-chair me-2"></i> Mesas</a>
+            @endif
+
+            {{-- SOLO ADMIN → Usuarios --}}
+            @if(auth()->user()->rol->nombre === 'Administrador')
+                <a href="{{ route('usuarios.index') }}"><i class="fas fa-users me-2"></i> Usuarios</a>
+            @endif
+
+            {{-- ADMIN + CAJERO → Reportes --}}
+            @if(in_array(auth()->user()->rol->nombre, ['Administrador','Cajero']))
+                <a href="{{ route('reportes.index') }}"><i class="fas fa-chart-bar me-2"></i> Reportes</a>
+            @endif
+
+            {{-- SOLO ADMIN → Información --}}
+            @if(auth()->user()->rol->nombre === 'Administrador')
+                <a href="{{ route('informacion.index') }}"><i class="fa-solid fa-circle-info me-2"></i> Información</a>
+            @endif
+        </div>
+
+        <hr>
+
+        <!-- Perfil usuario -->
         <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
             <div style="
-                background-color: #E6B325;   /* color del círculo */
-                border-radius: 50%;          /* lo hace redondo */
-                width: 60px;                 /* tamaño del círculo */
+                background-color: #E6B325;
+                border-radius: 50%;
+                width: 60px;
                 height: 60px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 box-shadow: 0 0 12px rgba(230,179,37,0.5);
-                transition: all 0.3s;
-            ">
+                transition: all 0.3s;">
                 <i class="bi bi-person-fill" style="font-size: 2rem; color: #0D0D0D;"></i>
             </div>
         </div>
 
+        <div style="margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(230,179,37,0.1); text-align: center; box-shadow: 0 0 15px rgba(230,179,37,0.2);">
+            <p style="margin-bottom: 6px; font-weight: bold; color: #E6B325;">
+                {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
+            </p>
+            <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
+                {{ Auth::user()->correo }}
+            </p>
+            <form method="GET" action="{{ route('perfil.index') }}" style="margin-bottom: 12px">
+                @csrf
+                <button type="submit" style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                    Ver Perfil
+                </button>
+            </form>
 
-        @guest
-            <!-- Si NO está logueado -->
-            <a href="{{ route('login.form') }}">
-                Iniciar Sesión
-            </a>
-            <br>
-            <br>
-        @else
-            <!-- Si está logueado -->
-            <div style="margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(230,179,37,0.1); text-align: center; box-shadow: 0 0 15px rgba(230,179,37,0.2);">
-                <p style="margin-bottom: 6px; font-weight: bold; color: #E6B325;">
-                    {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
-                </p>
-                <p style="margin-bottom: 12px; font-size: 0.9rem; color: #C0C0C0;">
-                    {{ Auth::user()->correo }}
-                </p>
-                <form method="GET" action="{{ route('perfil.index') }}" style="margin-bottom: 12px">
-                    @csrf
-                    <button type="submit" 
-                        style="background:#c9981f; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
-                        Ver Perfil
-                    </button>
-                </form>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" 
-                        style="background:#7A0F0F; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
-                        Cerrar Sesión
-                    </button>
-                </form>
-            </div>
-
-            <style>
-                /* Hover glow dorado */
-                .sidebar form button:hover {
-                    background:#5C0B0B;
-                    box-shadow: 0 0 10px rgba(230,179,37,0.6);
-                }
-            </style>
-        @endguest
-
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" style="background:#7A0F0F; color:#FAF9F6; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-weight:bold; width:100%; transition: all 0.3s;">
+                    Cerrar Sesión
+                </button>
+            </form>
         </div>
     </div>
+    @endauth
 
     <!-- CONTENIDO -->
-    <div class="content">
+    <div class="content" 
+            @guest
+            style="margin-left: 0; width: 100%;"
+            @endguest>
         @yield('content')
     </div>
 
+    {{-- Scripts --}}
     <script>
+    @auth
         // Funcionalidad del menú móvil
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');
@@ -638,21 +659,14 @@
                 sidebar.classList.toggle('active');
                 sidebarOverlay.classList.toggle('active');
                 
-                // Cambiar ícono
                 const icon = menuToggle.querySelector('i');
-                if (sidebar.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
             }
 
             menuToggle.addEventListener('click', toggleSidebar);
             sidebarOverlay.addEventListener('click', toggleSidebar);
 
-            // Cerrar sidebar al hacer clic en un enlace (en móviles)
             if (window.innerWidth <= 767) {
                 const sidebarLinks = sidebar.querySelectorAll('a');
                 sidebarLinks.forEach(link => {
@@ -660,7 +674,6 @@
                 });
             }
 
-            // Ajustar en resize
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 767) {
                     sidebar.classList.remove('active');
@@ -671,12 +684,13 @@
                 }
             });
         });
+    @endauth
 
         window.addEventListener('pageshow', function(event) {
-        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
-            window.location.reload(); // recarga la página si venimos de historial
-        }
-    });
+            if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+                window.location.reload();
+            }
+        });
     </script>
 
     @stack('scripts')

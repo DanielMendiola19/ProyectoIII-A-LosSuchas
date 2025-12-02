@@ -85,9 +85,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // =========================
-    // Mesas -> Admin y Cajero
+    // Mesas -> Admin y Mesero
     // =========================
-    Route::middleware('role:Administrador,Cajero')->group(function () {
+    Route::middleware('role:Administrador,Mesero')->group(function () {
         Route::resource('mesas', MesaController::class)->except(['show', 'edit', 'create']);
         Route::get('/mesas/verificar/{numero}', [MesaController::class, 'verificarNumero']);
         Route::post('/mesas/guardar-posiciones', [MesaController::class, 'guardarPosiciones'])->name('mesas.guardarPosiciones');
