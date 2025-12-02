@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DetallePedido;
+use App\Models\Mesa;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -21,15 +22,14 @@ class DashboardController extends Controller
     $labelsBarras = $masVendidos->pluck('producto.nombre')->toArray();
     $dataBarras = $masVendidos->pluck('total_vendidos')->toArray();
 
-    // 2️⃣ Ventas por categoría (para gráfico de torta)
-    $ventasCategorias = DetallePedido::join('productos', 'detalle_pedido.producto_id', '=', 'productos.id')
-        ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
-        ->select('categorias.nombre', DB::raw('SUM(detalle_pedido.cantidad) as total'))
-        ->groupBy('categorias.nombre')
+// 2️⃣ Mesas por estado (para gráfico de torta)
+    $mesasPorEstado = Mesa::select('estado', DB::raw('COUNT(*) as total'))
+        ->groupBy('estado')
         ->get();
 
-    $labelsTorta = $ventasCategorias->pluck('nombre')->toArray();
-    $dataTorta = $ventasCategorias->pluck('total')->toArray();
+    $labelsTorta = $mesasPorEstado->pluck('estado')->toArray(); // ["Disponible","Ocupada","Mantenimiento"]
+    $dataTorta   = $mesasPorEstado->pluck('total')->toArray();
+
 
     // 3️⃣ Evolución de ventas por día de la última semana (para gráfico de línea)
     $hoy = now();

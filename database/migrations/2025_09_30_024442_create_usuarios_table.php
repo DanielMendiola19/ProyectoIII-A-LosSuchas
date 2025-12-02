@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('contrasena');
             $table->foreignId('rol_id')->constrained('roles')->onDelete('cascade');
             $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 

@@ -88,74 +88,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Acciones (botones) */
-.perfil-acciones {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-    justify-content: center;
-}
-
-.perfil-acciones a {
-    text-decoration: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.perfil-acciones .btn-principal {
-    background: linear-gradient(135deg, var(--dorado), var(--dorado-hover));
-    color: var(--negro-carbon);
-    border: none;
-}
-
-.perfil-acciones .btn-principal:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(230,179,37,0.4);
-}
-
-.perfil-acciones .btn-secundario {
-    background: transparent;
-    color: var(--gris-suave);
-    border: 2px solid var(--gris-suave);
-}
-
-.perfil-acciones .btn-secundario:hover {
-    background: rgba(255,255,255,0.1);
-    color: var(--blanco-hueso);
-    border-color: var(--blanco-hueso);
-}
-
-/* Responsive */
-@media (max-width: 767px) {
-    .perfil-acciones {
-        flex-direction: column;
-    }
-
-    .perfil-acciones a {
-        width: 100%;
-    }
-
-    .perfil-info p {
-        font-size: 1rem;
-    }
-
-    .perfil-pedidos h3 {
-        font-size: 1.3rem;
-    }
-
-    .perfil-pedidos li {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-
 /* Formulario de cambio de contraseña */
 #form-cambiar-password {
     margin-top: 25px;
@@ -176,14 +108,20 @@ body {
     font-size: 1.1rem;
 }
 
+.input-with-icon {
+    position: relative;
+}
+
 #form-cambiar-password input {
-    padding: 12px 15px;
+    padding: 12px 40px 12px 15px;
     border-radius: 8px;
     border: 1px solid rgba(230,179,37,0.3);
     background: rgba(255,255,255,0.05);
     color: var(--blanco-hueso);
     font-size: 1rem;
     transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #form-cambiar-password input:focus {
@@ -191,6 +129,20 @@ body {
     border-color: var(--dorado);
     box-shadow: 0 0 0 2px rgba(230,179,37,0.3);
     background: rgba(255,255,255,0.1);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--gris-suave);
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: var(--dorado);
 }
 
 /* Botón de guardar */
@@ -215,13 +167,176 @@ body {
 }
 
 /* Mensajes de error */
-#form-cambiar-password small {
+.error-message {
     font-size: 0.9rem;
     color: var(--rojo-peligro);
 }
 
+/* Indicadores de contraseña */
+.password-requirements {
+    display: none;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.password-requirements span {
+    display: block;
+    margin-bottom: 2px;
+    transition: color 0.3s;
+}
+
+.password-requirements .invalid {
+    color: var(--rojo-peligro);
+}
+
+.password-requirements .valid {
+    color: var(--verde-exito);
+}
+
+.password-match {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.password-match.invalid {
+    color: var(--rojo-peligro);
+}
+
+.password-match.valid {
+    color: var(--verde-exito);
+}
+
+/* ========== ESTILOS PARA NOTIFICACIONES ========== */
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.notification {
+    background: rgba(75, 46, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border-left: 4px solid var(--dorado);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(400px);
+    opacity: 0;
+}
+
+.notification.success {
+    border-left-color: var(--verde-exito);
+}
+
+.notification.error {
+    border-left-color: var(--rojo-peligro);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 15px;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification.success .notification-icon {
+    color: var(--verde-exito);
+}
+
+.notification.error .notification-icon {
+    color: var(--rojo-peligro);
+}
+
+.notification-message {
+    flex: 1;
+    color: var(--blanco-hueso);
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--gris-suave);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    color: var(--blanco-hueso);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Efecto de progreso (opcional) */
+.notification::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    animation: progress 5s linear forwards;
+}
+
+.notification.success::after {
+    color: var(--verde-exito);
+}
+
+.notification.error::after {
+    color: var(--rojo-peligro);
+}
+
+@keyframes progress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
 /* Responsive */
 @media (max-width: 767px) {
+    .perfil-container {
+        padding: 20px 15px;
+    }
+    
+    .perfil-container h1 {
+        font-size: 2.2rem;
+    }
+    
+    .perfil-card {
+        padding: 20px;
+    }
+    
     #form-cambiar-password {
         gap: 15px;
     }
@@ -232,11 +347,38 @@ body {
 
     #form-cambiar-password input {
         font-size: 0.95rem;
-        padding: 10px 12px;
+        padding: 10px 35px 10px 12px;
     }
 
     #form-cambiar-password .btn-principal {
         font-size: 0.95rem;
         padding: 10px 15px;
+    }
+
+    /* Notificaciones responsive */
+    #notifications-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification-content {
+        padding: 12px 15px;
+        gap: 12px;
+    }
+    
+    .notification-icon {
+        font-size: 1.3rem;
+    }
+    
+    .notification-message {
+        font-size: 0.9rem;
+    }
+    
+    .notification-close {
+        font-size: 1.2rem;
+        width: 25px;
+        height: 25px;
     }
 }

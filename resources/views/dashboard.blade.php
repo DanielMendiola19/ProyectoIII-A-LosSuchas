@@ -25,7 +25,7 @@
         <div class="card" onclick="location.href='{{ route('mesas.index') }}'">
             <i class="fas fa-chair"></i> Mesas
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='{{ route('usuarios.index') }}'">
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card" onclick="location.href='{{ route('reportes.index') }}'">
@@ -43,7 +43,7 @@
         <canvas id="barChart"></canvas>
     </div>
     <div class="stat-card">
-        <h2><i class="fas fa-chart-pie"></i> Ventas por Categoría</h2>
+        <h2><i class="fas fa-chart-pie"></i> Gestión de Mesas</h2>
         <canvas id="pieChart"></canvas>
     </div>
     <div class="stat-card">
@@ -93,24 +93,56 @@ new Chart(document.getElementById('barChart'), {
     }
 });
 
-// 🍰 Torta
 new Chart(document.getElementById('pieChart'), {
     type: 'pie',
     data: {
         labels: labelsTorta,
         datasets: [{
             data: dataTorta,
-            backgroundColor: colors,
+            backgroundColor: ['#D6A75D', '#7B4B27', '#F1D5A5'], // Café claro, marrón medio, crema pastel
             borderColor: '#FFFFFF',
             borderWidth: 2
         }]
     },
-    options: { 
+    options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { color: '#FFFFFF', font: { weight: 'bold' } } } }
-    }
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#FFFFFF',
+                    font: { weight: 'bold' }
+                },
+                onClick: null // desactiva ocultar al click
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.raw || 0;
+                        return label + ': ' + value;
+                    }
+                }
+            },
+            datalabels: {
+                color: '#3B2A1A', // color texto café oscuro
+                font: { weight: 'bold', size: 14 },
+                anchor: 'center', // centrado en la porción
+                align: 'center',
+                clamp: true, // evita que se salga de la porción
+                formatter: function(value, context) {
+                    return context.chart.data.labels[context.dataIndex]; // mostrar nombre del estado
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 });
+
+
+
+
 
 // 📈 Línea
 new Chart(document.getElementById('lineChart'), {

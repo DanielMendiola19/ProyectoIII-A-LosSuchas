@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HistorialPedidoController;
+use App\Http\Controllers\ReporteVentasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/productos', [ProductoController::class, 'apiProductos']);
 Route::post('/login', [AuthController::class, 'loginApi']);
+
+Route::get('/historial', [HistorialPedidoController::class, 'apiHistorial']);
+Route::post('/pedido/{id}/estado', [HistorialPedidoController::class, 'apiUpdateEstado']);
+
+Route::get('/reportes/ultimos7', [ReporteVentasController::class, 'apiUltimos7']);
